@@ -10,20 +10,16 @@ using Scada.Common;
 using System.Reflection;
 using System.Globalization;
 using Scada.Config;
+using System.Data.Sql;
+using System.Data.SqlClient;
 
 namespace Scada.Declare
 {
     /*
-     * HPIC:    Send 'SFTW-131-001ER Ver' once, always recv data.
-     * Weather: Send ':D' every 30s.
-     * DWD: Send HEX(00 32 CD A0 30 30 30 01) every 30s
-     * Shelter: Send Q1\r every 30s.
-     * 
-     * 
-     * 
-     * 
+     * Weather: Send ':D' every 30s to get the data.
+     * Weather: Send ':S' every 24h to reset the weather device, to reset the rain gauge value
      */
-    public class StandardDevice : Device
+    public class RadeyeDevice : Device
 	{
 		private const int ComDataBits = 8;
 
@@ -35,21 +31,19 @@ namespace Scada.Declare
 
 		private int baudRate = 9600;
 
-        private int dataBits = 8;
+        private int dataBits = 7;
 
-        private StopBits stopBits = StopBits.One;
+        private StopBits stopBits = StopBits.Two ;
 
-        private Parity parity = Parity.None;
+        private Parity parity = Parity.Even;
 
 		private bool isVirtual = false;
 
-		private bool actionSendInHex = false;
+        // retrieve gammalong command
+		private byte[] actionSend1 = null;
 
-		private string actionCondition = string.Empty;
-
-		private byte[] actionSend = null;
-
-		// private int actionDelay = 0;
+        // retrieve emissionlong command
+        private byte[] actionSend2 = null;
 
         private int actionInterval = 0;
 
@@ -58,8 +52,6 @@ namespace Scada.Declare
 		private string insertIntoCommand = string.Empty;
 
 		private FieldConfig[] fieldsConfig = null;
-
-		private DataParser dataParser = null;		
 
         private IMessageTimer senderTimer = null;
 
@@ -71,24 +63,26 @@ namespace Scada.Declare
 
 		private List<byte> exampleBuffer = new List<byte>();
 
+        // do not support virtual device
+        private bool IsRealDevice = true;
 
 		private string error = "No Error";
 
         // private static int MaxDelay = 10;
 
-        private DateTime currentActionTime = default(DateTime);
-
         private DateTime currentRecordTime = default(DateTime);
 
-        private byte[] lastLine;
+        private string doserate;
 
-        private bool calcDataWithLastData = false;
+     
 
         // Serial port sleep 200 ms as default before read
         private int bufferSleep = 200;
 
+        // init status for first start (第一次重启时需要重置设备，以后每天重置一次)
+        private bool initStatus = false;
 
-		public StandardDevice(DeviceEntry entry)
+		public RadeyeDevice(DeviceEntry entry)
 		{
             this.entry = entry;
 			if (!this.Initialize(entry))
@@ -98,7 +92,7 @@ namespace Scada.Declare
 			}
 		}
 
-        ~StandardDevice()
+        ~RadeyeDevice()
         {
         }
 
@@ -112,18 +106,16 @@ namespace Scada.Declare
             this.baudRate = this.GetValue(entry, DeviceEntry.BaudRate, 9600);
             this.readTimeout = this.GetValue(entry, DeviceEntry.ReadTimeout, 12000);        
             this.dataBits = this.GetValue(entry, DeviceEntry.DataBits, ComDataBits);
-            this.stopBits = (StopBits)this.GetValue(entry, DeviceEntry.StopBits, (int)StopBits.One);
+            this.stopBits = (StopBits)this.GetValue(entry, DeviceEntry.StopBits, (int)StopBits.Two );
 
-			StringValue parity = (StringValue)entry[DeviceEntry.Parity];
-			this.parity = SerialPorts.ParseParity(parity);
+		//	StringValue parity = (StringValue)entry[DeviceEntry.Parity];
+			//this.parity = SerialPorts.ParseParity(parity);
 
-			
-			// Virtual On
-			string isVirtual = (StringValue)entry[DeviceEntry.Virtual];
-			if (isVirtual != null && isVirtual.ToLower() == "true")
-			{
-				this.isVirtual = true;
-			}
+            this.actionSend1 = Encoding.ASCII.GetBytes((StringValue)entry["ActionSend1"] );
+
+            this.actionSend2 = Encoding.ASCII.GetBytes((StringValue)entry["ActionSend2"] + "\r\n");
+
+           
 
             string bufferSleepString = (StringValue)entry["BufferSleep"];
             if (bufferSleepString != null)
@@ -131,41 +123,12 @@ namespace Scada.Declare
                 this.bufferSleep = int.Parse(bufferSleepString);
             }
 
-			this.actionCondition = (StringValue)entry[DeviceEntry.ActionCondition];
-			string actionSendInHex = (StringValue)entry[DeviceEntry.ActionSendInHex];
-			if (actionSendInHex != "true")
-			{
-				string actionSend = (StringValue)entry[DeviceEntry.ActionSend];
-                if (actionSend != null)
-                {
-                    actionSend = actionSend.Replace("\\r", "\r");
-                    this.actionSend = Encoding.ASCII.GetBytes(actionSend);
-                }
-			}
-			else
-			{
-				this.actionSendInHex = true;
-				string hexes = (StringValue)entry[DeviceEntry.ActionSend];
-                if (!string.IsNullOrEmpty(hexes))
-                {
-                    hexes = hexes.Trim();
-                    this.actionSend = DeviceEntry.ParseHex(hexes);
-                }
-			}
-
 			// this.actionDelay = (StringValue)entry[DeviceEntry.ActionDelay];
 
             const int DefaultRecordInterval = 30;
             this.actionInterval = this.GetValue(entry, DeviceEntry.ActionInterval, DefaultRecordInterval);
             this.RecordInterval = this.GetValue(entry, DeviceEntry.RecordInterval, DefaultRecordInterval);
             this.recordTimePolicy.Interval = this.RecordInterval;
-
-            this.calcDataWithLastData = this.GetValue(entry, "CalcLast", 0) == 1;
-
-			// Set DataParser & factors
-            string dataParserClz = (StringValue)entry[DeviceEntry.DataParser];
-            this.dataParser = this.GetDataParser(dataParserClz);
-            this.SetDataParserFactors(this.dataParser, entry);
 
             string tableName = (StringValue)entry[DeviceEntry.TableName];
             if (!string.IsNullOrEmpty(tableName))
@@ -190,24 +153,8 @@ namespace Scada.Declare
             List<FieldConfig> fieldConfigList = ParseDataFieldConfig(fieldsConfigStr);
 			this.fieldsConfig = fieldConfigList.ToArray<FieldConfig>();
 
-			if (!this.IsRealDevice)
-			{
-				string el = (StringValue)entry[DeviceEntry.ExampleLine];
-				el = el.Replace("\\r", "\r");
-				el = el.Replace("\\n", "\n");
-
-				this.exampleLine = el;
-			}
 			return true;
 		}
-
-        public bool IsRealDevice
-        {
-            get
-            {
-                return !this.isVirtual;
-            }
-        }
 
 		private bool IsOpen
 		{
@@ -224,14 +171,14 @@ namespace Scada.Declare
                 this.serialPort = new SerialPort(portName);
 
                 this.serialPort.BaudRate = this.baudRate;
-
-                this.serialPort.Parity = this.parity;       //Parity none
-                this.serialPort.StopBits = this.stopBits;    //(StopBits)this.stopBits;    //StopBits 1
-                this.serialPort.DataBits = this.dataBits;               // this.dataBits;   // DataBits 8bit
+                this.serialPort.DtrEnable = false ;
+                this.serialPort.Parity = this.parity ;       //Parity Even
+                this.serialPort.StopBits = this.stopBits;    //(StopBits)this.stopBits;    //StopBits 2
+                this.serialPort.DataBits = this.dataBits;               // this.dataBits;   // DataBits 7bit
                 this.serialPort.ReadTimeout = 10000;        // this.readTimeout;
 
-                this.serialPort.RtsEnable = true;
-                this.serialPort.NewLine = "/r/n";	        //?
+                this.serialPort.RtsEnable = false ;
+                this.serialPort.NewLine = "\r";	        //?
                 this.serialPort.DataReceived += this.SerialPortDataReceived;
 
                 // Real Devie begins here.
@@ -243,19 +190,9 @@ namespace Scada.Declare
 					{
 						this.StartSenderTimer(this.actionInterval);
 					}
-					else
-                    {
-                        this.Write(this.actionSend);
-					}
+
                     // Set status of starting.
                     PostStartStatus();
-
-                    /* TODO: Remove after test.
-                    if (this.actionCondition == null || this.actionCondition.Length == 0)
-                    {
-                        this.Send(this.actionSend);
-                    }
-                    */
 				}
 				else
 				{
@@ -274,6 +211,7 @@ namespace Scada.Declare
             {
                 string message = "Other: " + e.Message;
                 RecordManager.DoSystemEventRecord(this, message);
+                return false;
             }
 
 			return true;
@@ -281,16 +219,16 @@ namespace Scada.Declare
 
         private void StartSenderTimer(int interval)
         {
+            // timer 每2s一次
+            int minInterval = 2;
             if (MainApplication.TimerCreator != null)
             {
-                const int MinInterval = 2;
-                this.senderTimer = MainApplication.TimerCreator.CreateTimer(MinInterval);
-                // Trigger every 2s.
+                this.senderTimer = MainApplication.TimerCreator.CreateTimer(minInterval);
+
                 this.senderTimer.Start(() => 
                 {
-                    this.Write(this.actionSend);
+                    this.Write();
                 });
-
             }
         }
 
@@ -302,16 +240,10 @@ namespace Scada.Declare
             {
                 this.StartSenderTimer(this.actionInterval);
             }
-            else if (this.actionInterval == 0)
-            {
-                this.OnSendDataToVirtualDevice(this.actionSend);
-            }
-            /*
-            else if (!string.IsNullOrEmpty(this.actionCondition))
-            {
-                this.Send(this.actionSend);
-            }
-            */
+            else
+            { }
+
+            return;
         }
         //////////////////////////////////////////////////////////////////////
 
@@ -332,38 +264,31 @@ namespace Scada.Declare
 			}
 			else // Virtual Device~!
 			{
-				if (this.actionInterval > 1)
-				{
-					// 假设: 应答式的数据，都是完整的帧.
-					return this.GetExampleLine();
-				}
-				else
-				{
-					if (this.actionSendInHex)
-					{
-						return this.GetExampleLine();
-					}
-					// 不完整帧模拟
-					byte[] bytes = this.GetExampleLine();
-					int len = bytes.Length;
-					foreach (byte b in bytes)
-					{
-						exampleBuffer.Add(b);
-					}
-
-					int c = new Random().Next(len - 5, len + 5);
-					int count = Math.Min(c, len);
-					byte[] ret = new byte[count];
-
-					for (int i = 0; i < count; ++i)
-					{
-						ret[i] = exampleBuffer[i];
-					}
-					exampleBuffer.RemoveRange(0, count);
-
-					return ret;
-				}
+                if (this.actionInterval > 1)
+                {
+                    // 假设: 应答式的数据，都是完整的帧.
+                    return this.GetExampleLine();
+                }
+                else
+                {
+                    return this.GetExampleLine();
+                }
 			}
+		}
+
+       
+
+		private byte[] GetLineBytes(byte[] data)
+		{
+            int len = data.Length;
+
+            if (data[len - 1] == (byte)0x0a)//
+            {
+                data[len - 1] = 0;
+                return data;
+            }
+
+            else { return null; }
 		}
 
 		private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs evt)  
@@ -374,25 +299,15 @@ namespace Scada.Declare
 				handled = false;
 				byte[] buffer = this.ReadData();
 
-				byte[] line = this.dataParser.GetLineBytes(buffer);
+				byte[] line = this.GetLineBytes(buffer);
 				if (line == null || line.Length == 0)
 				{
                     return;
 				}
 
-                /*
-                if (this.sensitive)                
-                {
-                    DeviceData sdd;
-                    if (this.GetSensitiveData(line, out sdd))
-                    {
-                        this.SynchronizationContext.Post(this.DataReceived, sdd);
-                    }
-                }
-                 * */
-
                 if (this.OnReceiveData(line))
                 {
+                    // 存入数据库
                     this.RecordData(line);
                 }
 
@@ -409,17 +324,6 @@ namespace Scada.Declare
 
         internal void RecordData(byte[] line)
         {
-            // Defect: HPIC need check the right time here.
-            // if ActionInterval == 0, the time trigger not depends send-time.
-            DateTime rightTime = default(DateTime);
-            if (!this.recordTimePolicy.NowAtRightTime(out rightTime) ||
-                this.currentRecordTime == rightTime)
-            {
-                return;
-            }
-
-            this.currentRecordTime = rightTime;
-
             DeviceData dd;
             if (!this.GetDeviceData(line, this.currentRecordTime, out dd))
             {
@@ -443,48 +347,20 @@ namespace Scada.Declare
 
 		protected bool GetDeviceData(byte[] line, DateTime time, out DeviceData dd)
 		{
-            if (time == default(DateTime))
-            {
-                time = DateTime.Now;
-            }
-            string[] data = null;
-            try
-            {
-                data = this.dataParser.Search(line, this.lastLine);
+            dd = default(DeviceData);
+            
 
-                this.lastLine = line;
-            }
-            catch (Exception e)
-            {
-                string errorMsg = "Parse data failure:" + e.Message;
-                RecordManager.DoSystemEventRecord(this, errorMsg);
-            }
 
-			dd = default(DeviceData);
-			if (data == null || data.Length == 0)
-			{
-				return false;
-			}
+            string[] data = new string[1];
+            
+            //fill the measurement to data
+            data[0] = this.doserate;
             dd.Time = time;
             object[] fields = Device.GetFieldsData(data, time, this.fieldsConfig);
 			dd = new DeviceData(this, fields);
 			dd.InsertIntoCommand = this.insertIntoCommand;
 
-			// deviceData.FieldsConfig = this.fieldsConfig;
 			return true;
-		}
-
-		private bool IsActionCondition(string line)
-		{
-            if (this.actionCondition == null || this.actionCondition == string.Empty)
-			{
-				return true;
-			}
-			if (line.IndexOf(this.actionCondition) >= 0)
-			{
-				return true;
-			}
-			return false;
 		}
 
 		public override void Start(string address)
@@ -495,29 +371,51 @@ namespace Scada.Declare
             }
         }
 
-		public void Write(byte[] action)
+		public void Write()
 		{
-            if (action == null || action.Length == 0)
+            if (this.serialPort == null || !this.IsOpen)
             {
                 return;
             }
 
-			if (this.serialPort != null && this.IsOpen)
-			{
-				if (this.IsRealDevice)
-				{
-                    // RecordManager.DoSystemEventRecord(this, Encoding.ASCII.GetString(action));
-                    // BUG for shelter!, Duplicated time key!!
-                    // this.currentActionTime = time;
-					this.serialPort.Write(action, 0, action.Length);
+            try
+            {
+                // 归一化时间
+                DateTime rightTime = default(DateTime);
+                if (!this.recordTimePolicy.NowAtRightTime(out rightTime) ||
+                    this.currentRecordTime == rightTime)
+                {
+                    return;
                 }
+                this.currentRecordTime = rightTime;
+
+                // 取Gammalong
+                if (this.IsRealDevice)
+                {
+                    this.serialPort.Write(this.actionSend1, 0, this.actionSend1.Length);
+                }
+
+                Thread.Sleep(50);
+
+                // 取Gammaemission
+                if (this.IsRealDevice)
+                {
+                    this.serialPort.Write(this.actionSend2, 0, this.actionSend2.Length);
+                }
+                
                 #region Virtual-Device
                 else
-				{
-                    this.OnSendDataToVirtualDevice(action);
+                {
+                    this.OnSendDataToVirtualDevice(this.actionSend1);
                 }
                 #endregion
             }
+            catch (Exception e)
+            {
+                RecordManager.DoSystemEventRecord(this, "Write COM Data Error: " + e.Message, RecordType.Error);
+            }
+
+            
 		}
 
         public override void Stop()
@@ -539,13 +437,26 @@ namespace Scada.Declare
 
         public override bool OnReceiveData(byte[] line)
         {
-            return true;
+            string strData = System.Text.Encoding.Default.GetString(line);
+
+            if (strData.Contains(">>#"))
+            {
+                this.doserate = (int.Parse (strData.Substring(3, 2))*10).ToString ();
+
+                
+                    
+                // 这里只取值，不存储
+                return true ;
+            }
+            
+
+            else { return false; }
         }
 
 #region virtual-device
         private void OnSendDataToVirtualDevice(byte[] action)
         {
-            if (Bytes.Equals(action, this.actionSend))
+            if (Bytes.Equals(action, this.actionSend1))
             {
                 if (this.actionInterval > 0)
                 {
@@ -566,14 +477,7 @@ namespace Scada.Declare
 
         private byte[] GetExampleLine(int rand = 0)
         {
-			if (this.actionSendInHex)
-			{
-				return DeviceEntry.ParseHex(this.exampleLine);
-			}
-			else
-			{
-				return Encoding.ASCII.GetBytes(this.exampleLine);
-			}
+			return Encoding.ASCII.GetBytes(this.exampleLine);
         }
 #endregion
 	}
