@@ -91,6 +91,17 @@
       <code field="doserate">01000401</code>
     </device>
 
+    <!-- NOTICE -->
+    <!-- NOTICE -->
+    <device id="Scada.inspector1000" table="inspector1000_rec" 
+      eno="010005" debug-data-time="2014-10-26 12:00:00">
+      <code field="doserate">01000501</code>
+      <code field="nuclide">01000502</code>
+      <code field="type">01000503</code>
+      <code field="active">01000504</code>
+      <code field="err">01000505</code>
+    </device>
+
 
   </devices>
 </settings>

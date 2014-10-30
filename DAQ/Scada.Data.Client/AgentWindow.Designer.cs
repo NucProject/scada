@@ -366,6 +366,14 @@
             this.SendCinderellaStatusModuleToolStripMenuItem.Text = "radeye";
             this.SendCinderellaStatusModuleToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
             // 
+            // Sendinspector1000StatusModuleToolStripMenuItem
+            // 
+            this.SendCinderellaStatusModuleToolStripMenuItem.Name = "Sendinspector1000StatusModuleToolStripMenuItem";
+            this.SendCinderellaStatusModuleToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendCinderellaStatusModuleToolStripMenuItem.Tag = "scada.inspector1000";
+            this.SendCinderellaStatusModuleToolStripMenuItem.Text = "inspector1000";
+            this.SendCinderellaStatusModuleToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
+            // 
             // SendShelterToolStripMenuItem
             // 
             this.SendShelterToolStripMenuItem.Enabled = false;

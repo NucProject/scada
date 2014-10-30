@@ -482,6 +482,7 @@ namespace Scada.Data.Client
             this.InitDeviceColumn("scada.bai9125", "bai9125");
             this.InitDeviceColumn("scada.mds", "mds");
             this.InitDeviceColumn("scada.radeye", "radeye");
+            this.InitDeviceColumn("scada.inspector1000", "inspector1000");
         }
 
         private static string FormatTime(DateTime time)
@@ -760,6 +761,10 @@ namespace Scada.Data.Client
             else if (device == "radeye")
             {
                 return Devices.Radeye;
+            }
+            else if (device == "inspector1000")
+            {
+                return Devices.Inspector1000;
             }
             return string.Empty;
         }
