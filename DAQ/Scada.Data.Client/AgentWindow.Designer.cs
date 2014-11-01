@@ -268,7 +268,7 @@
             this.debugConsole.Name = "debugConsole";
             this.debugConsole.Size = new System.Drawing.Size(830, 318);
             this.debugConsole.TabIndex = 0;
-            this.debugConsole.TextChanged += new System.EventHandler(this.debugConsole_TextChanged);
+            //this.debugConsole.TextChanged += new System.EventHandler(this.debugConsole_TextChanged);
             // 
             // mainToolStrip
             // 
@@ -364,6 +364,14 @@
             this.SendCinderellaStatusModuleToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.SendCinderellaStatusModuleToolStripMenuItem.Tag = "scada.radeye";
             this.SendCinderellaStatusModuleToolStripMenuItem.Text = "radeye";
+            this.SendCinderellaStatusModuleToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
+            // 
+            // Sendinspector1000StatusModuleToolStripMenuItem
+            // 
+            this.SendCinderellaStatusModuleToolStripMenuItem.Name = "Sendinspector1000StatusModuleToolStripMenuItem";
+            this.SendCinderellaStatusModuleToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendCinderellaStatusModuleToolStripMenuItem.Tag = "scada.inspector1000";
+            this.SendCinderellaStatusModuleToolStripMenuItem.Text = "inspector1000";
             this.SendCinderellaStatusModuleToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
             // 
             // SendShelterToolStripMenuItem

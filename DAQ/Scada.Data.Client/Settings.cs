@@ -26,7 +26,8 @@ namespace Scada.Data.Client
                                 Devices.Mds,
                                 Devices.Radeye,
                                 Devices.Bai9850,
-                                Devices.Bai9125
+                                Devices.Bai9125,
+                                Devices.Inspector1000
                                      };
 
         public string[] DataDeviceKeys = {
@@ -35,7 +36,8 @@ namespace Scada.Data.Client
                                 Devices.Mds,
                                 Devices.Radeye,
                                 Devices.Bai9850,
-                                Devices.Bai9125 
+                                Devices.Bai9125,
+                                Devices.Inspector1000
                                      };
 
 

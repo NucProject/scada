@@ -20,5 +20,7 @@ namespace Scada.Data.Client
         public const string Mds = Prefix + "mds";
 
         public const string Radeye = Prefix + "radeye";
+
+        public const string Inspector1000 = Prefix + "inspector1000";
     }
 }

@@ -173,6 +173,8 @@ namespace Scada.Data.Client
                 return "mds";
             else if (deviceKey == Devices.Radeye)
                 return "radeye";
+            else if (deviceKey == Devices.Inspector1000)
+                return "inspector1000";
             else
                 return string.Empty;
         }
