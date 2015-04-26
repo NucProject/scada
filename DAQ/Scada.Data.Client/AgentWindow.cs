@@ -54,11 +54,11 @@ namespace Scada.Data.Client
             }
         }
 
-        private System.Windows.Forms.Timer sendFileDataTimer;
+        private System.Threading.Timer sendFileDataTimer;
 
-        private System.Windows.Forms.Timer sendDBDataTimer;
+        private System.Threading.Timer sendDBDataTimer;
 
-        private System.Windows.Forms.Timer recvDataTimer;
+        private System.Threading.Timer recvDataTimer;
 
         private DataAgent agent;
 
@@ -288,25 +288,16 @@ namespace Scada.Data.Client
         {
 
             // 定期往数据中心发文件数据
-            this.sendFileDataTimer = new System.Windows.Forms.Timer();
-            this.sendFileDataTimer.Interval = FileTimerInterval;
-            this.sendFileDataTimer.Tick += this.HttpSendFileTick;
-            this.sendFileDataTimer.Start();
+            this.sendFileDataTimer = new System.Threading.Timer(HttpSendFileTick, 1, 0, FileTimerInterval);
 
             // 定期往数据中心发数据库数据
-            this.sendDBDataTimer = new System.Windows.Forms.Timer();
-            this.sendDBDataTimer.Interval = DBDataTimerInterval;
-            this.sendDBDataTimer.Tick += this.HttpSendDBDataTick;
-            this.sendDBDataTimer.Start();
+            this.sendDBDataTimer = new System.Threading.Timer(HttpSendDBDataTick, 1, 0, DBDataTimerInterval);
 
             // 每20s从数据中心取一次数据
-            this.recvDataTimer = new System.Windows.Forms.Timer();
-            this.recvDataTimer.Interval = 20 * 1000;
-            this.recvDataTimer.Tick += this.HttpRecvDataTick;
-            this.recvDataTimer.Start();
+            this.recvDataTimer = new System.Threading.Timer(HttpRecvDataTick, 1, 0, 20 * 1000);
         }
 
-        private void HttpRecvDataTick(object sender, EventArgs e)
+        private void HttpRecvDataTick(object sender)
         {
             if (this.isAutoData)
             {
@@ -327,7 +318,7 @@ namespace Scada.Data.Client
         }
 
         // 当归一化时间到来时上传数据
-        private void HttpSendDBDataTick(object sender, EventArgs e)
+        private void HttpSendDBDataTick(object sender)
         {
             if (!this.isAutoData)
                 return;
@@ -343,7 +334,7 @@ namespace Scada.Data.Client
 
 
         // 当归一化时间到来时上传数据
-        private void HttpSendFileTick(object sender, EventArgs e)
+        private void HttpSendFileTick(object sender)
         {
             if (!this.isAutoData)
                 return;
@@ -470,7 +461,7 @@ namespace Scada.Data.Client
         private static DateTime GetDeviceSendTime(DateTime dt, string deviceKey)
         {
             // Labr或者LabrFilter、labrnuclidefilter设备，每5分钟发送一次
-            if (deviceKey.Equals(Devices.Labr, StringComparison.OrdinalIgnoreCase))
+            if ((deviceKey.Equals(Devices.Labr, StringComparison.OrdinalIgnoreCase)) || (deviceKey.Equals(Devices.LabrFilter, StringComparison.OrdinalIgnoreCase)) || (deviceKey.Equals(Devices.LabrNuclideFilter, StringComparison.OrdinalIgnoreCase)))
             {
                 int min = dt.Minute / 5 * 5;
                 DateTime ret = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, min, 0);
@@ -720,7 +711,6 @@ namespace Scada.Data.Client
             else if (ne == NotifyEvents.SendDataOK)
             {
                 this.UpdateSendDataRecord(p.DeviceKey, false);
-                this.debugConsole.Text += string.Format("{0}\n", p.Message);
             }
             else if (ne == NotifyEvents.SendDataFailed)
             {

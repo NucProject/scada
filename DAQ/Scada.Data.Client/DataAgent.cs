@@ -162,6 +162,7 @@ namespace Scada.Data.Client
             }
         }
 
+        // 处理其余设备历史数据
         private void HandleHistoryData(string device, string start, string end, string times)
         {
             Notify n = new Notify();
@@ -172,6 +173,7 @@ namespace Scada.Data.Client
             this.NotifyEvent(this, NotifyEvents.HistoryData, n);
         }
 
+        // 处理hpge历史数据
         private void HandleHistoryData(string device, string sid)
         {
             Notify n = new Notify();
@@ -233,7 +235,6 @@ namespace Scada.Data.Client
                     Byte[] result = wc.UploadData(uri, "POST", data);
                     string strResult = Encoding.ASCII.GetString(result);
                     this.NotifyEvent(this, NotifyEvents.SendDataOK, new Notify() { DeviceKey = packet.DeviceKey, Message = strResult });
-                    this.NotifyEvent(this, NotifyEvents.DebugMessage, new Notify() { DeviceKey = packet.DeviceKey, Message = strResult });
 
                     return true;
                 }

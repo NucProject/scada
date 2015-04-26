@@ -57,9 +57,9 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data, Version=6.6.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+    <Reference Include="MySql.Data, Version=6.6.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Bin\Libs\MySql.Data.dll</HintPath>
+      <HintPath>..\Bin\Debug\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Bin\Libs\Newtonsoft.Json.dll</HintPath>
@@ -100,6 +100,7 @@
     <Compile Include="ShelterDevice.cs" />
     <Compile Include="StandardDevice.cs" />
     <Compile Include="WeatherDevice.cs" />
+    <Compile Include="WeatherDevice_Zhongming.cs" />
     <Compile Include="WebFileDevice.cs" />
     <Compile Include="XmlExtensions.cs" />
   </ItemGroup>
@@ -124,6 +125,9 @@
       <Project>{4a1ace05-95de-477e-a635-b89e57cecf74}</Project>
       <Name>Scada.Config</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MySql.Data.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

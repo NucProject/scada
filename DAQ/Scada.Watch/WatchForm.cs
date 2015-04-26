@@ -152,7 +152,7 @@ namespace Scada.Watch
 
         private void Per60secTimerTick(object sender, EventArgs e)
 		{
-            if (this.delayCounter > 2)
+            if (this.delayCounter >= 2)
             {
                 this.WatchProcess("Scada.Main", "/R");
 

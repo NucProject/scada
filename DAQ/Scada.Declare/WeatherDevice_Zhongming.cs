@@ -14,11 +14,9 @@ using Scada.Config;
 namespace Scada.Declare
 {
     /*
-     * Weather: Send ':D' every 30s to get the data.
-     * Weather: Send ':S' every 24h to reset the weather device, to reset the rain gauge value
-     * 该设备硬件本身存在问题：发送查询命令时，有时候没有任何返回数据。故采用每30s内多次发送，而仅在归一化时间接收。
+     * 国产气象
      */
-    public class WeatherDevice : Device
+    public class WeatherDevice_Zhongming : Device
 	{
 		private const int ComDataBits = 8;
 
@@ -41,7 +39,7 @@ namespace Scada.Declare
         // retrieve data command
 		private byte[] actionSend1 = null;
 
-        // reset device command
+        // reset rain command
         private byte[] actionSend2 = null;
 
         private int actionInterval = 0;
@@ -65,9 +63,6 @@ namespace Scada.Declare
 
 		private string error = "No Error";
 
-        // 假的风速数据
-        private string falsevalue;
-
         // private static int MaxDelay = 10;
 
         private DateTime currentRecordTime = default(DateTime);
@@ -77,7 +72,7 @@ namespace Scada.Declare
         // Serial port sleep 400 ms as default before read
         private int bufferSleep = 400;
 
-		public WeatherDevice(DeviceEntry entry)
+		public WeatherDevice_Zhongming(DeviceEntry entry)
 		{
             this.entry = entry;
 			if (!this.Initialize(entry))
@@ -87,7 +82,7 @@ namespace Scada.Declare
 			}
 		}
 
-        ~WeatherDevice()
+        ~WeatherDevice_Zhongming()
         {
         }
 
@@ -106,12 +101,23 @@ namespace Scada.Declare
 			StringValue parity = (StringValue)entry[DeviceEntry.Parity];
 			this.parity = SerialPorts.ParseParity(parity);
 
-            // 
-            this.actionSend1 = Encoding.ASCII.GetBytes((StringValue)entry["ActionSend1"]);
-            this.actionSend2 = Encoding.ASCII.GetBytes((StringValue)entry["ActionSend2"]);
 
-            // 仅用于假的风速数据
-            this.falsevalue = (StringValue)entry["Falsevalue"];
+            // 取气象测量值
+            string hexes1 = (StringValue)entry["ActionSend1"];
+            if (!string.IsNullOrEmpty(hexes1))
+            {
+                hexes1 = hexes1.Trim();
+                this.actionSend1 = DeviceEntry.ParseHex(hexes1);
+            }
+
+            // 重置感雨信息
+            string hexes2 = (StringValue)entry["ActionSend2"];
+            if (!string.IsNullOrEmpty(hexes2))
+            {
+                hexes2 = hexes2.Trim();
+                this.actionSend2 = DeviceEntry.ParseHex(hexes2);
+            }
+
 			
 			// Virtual On
 			string isVirtual = (StringValue)entry[DeviceEntry.Virtual];
@@ -239,7 +245,7 @@ namespace Scada.Declare
         private void StartSenderTimer(int interval)
         {
             // timer 每5s一次
-            int minInterval = 5;
+            int minInterval = 10;
             if (MainApplication.TimerCreator != null)
             {
                 this.senderTimer = MainApplication.TimerCreator.CreateTimer(minInterval);
@@ -268,7 +274,6 @@ namespace Scada.Declare
 
 		private byte[] ReadData()
 		{
-
 			if (this.IsRealDevice)
 			{
                 // important, sleep 400ms to wait all the data come to system buffer, Kaikai
@@ -286,14 +291,14 @@ namespace Scada.Declare
 				    int r = this.serialPort.Read(buffer, 0, n);
                     if (r != n)
                     {
-                        RecordManager.DoSystemEventRecord(this, "SerialPort Read Error");
+                        string strErr = "SerialPort Read Error, buffer len is " + n.ToString() + "," + "read len is " + r.ToString();
+                        RecordManager.DoSystemEventRecord(this, strErr);
 
                         return null;
                     }
 
 				    return buffer;
                 }
-				
 			}
 			else // Virtual Device~!
 			{
@@ -313,31 +318,17 @@ namespace Scada.Declare
 		{
             string[] ret = this.Search(data);
 
-            // 东北气象站坏了，给个假的值
-            if (this.falsevalue == "true")
-            {
-                double windspeed = 0;
-                if (double.TryParse(ret[7], out windspeed))
-                {
-                    if (windspeed <= 0)
-                    {
-                        Random ro = new Random();
-                        windspeed = 0.5 + ro.NextDouble();
-                        windspeed = Math.Round(windspeed, 1);
-                        ret[7] = windspeed.ToString();
-                    }
-                }
-            }
+            // ret: 0:id 1:speed 2:direction 3:pressure 4:tempreture 5:humidity 6:rain
             
             double rd = 0;
             double r = 0;
-            if (double.TryParse(ret[8], out r))
+            if (double.TryParse(ret[6], out r))
             {
                 if (lastData != null)
                 {
                     string[] ld = this.Search(lastData);
                     double rl = 0;
-                    if (double.TryParse(ld[8], out rl))
+                    if (double.TryParse(ld[6], out rl))
                     {
                         rd = r - rl;
                     }
@@ -350,7 +341,7 @@ namespace Scada.Declare
             else
             {
                 // TODO: ? Average.?
-                ret[8] = "0";
+                ret[6] = "0";
             }
 
             // 每次重置之后，rd值为负数，此时需要把rd重置
@@ -360,31 +351,25 @@ namespace Scada.Declare
             }
 
             // caculate rainspeed 
-            if (ret.Length >= 9)
-            {
-                double speed = Math.Round(rd, 1);
-                ret[9] = speed.ToString();
-            }
+            double speed = Math.Round(rd, 1);
+            ret[6] = speed.ToString();
 
             // 给感雨赋值
-            if (ret.Length >= 10)
+            if (rd > 0)
             {
-                if (rd > 0)
-                {
-                    ret[10] = "1";
-                }
-                else
-                {
-                    ret[10] = "0";
-                }
+                ret[0] = "1";
+            }
+            else
+            {
+                ret[0] = "0";
             }
 
             // caculate pressure
             double pressure = 0;
-            if (double.TryParse(ret[5], out pressure))
+            if (double.TryParse(ret[3], out pressure))
             {
                 pressure = Math.Round(pressure / 10, 1);
-                ret[5] = pressure.ToString();
+                ret[3] = pressure.ToString();
             }
 
             return ret;
@@ -392,24 +377,74 @@ namespace Scada.Declare
 
         private string[] Search(byte[] data)
         {
-            // >"11/29/12","00:58", 10.0, 55,  1.3,1018.4,360,  0.0,   0.0,2,!195
+            // 0R0,S=0.1,D=14.0,P=1026.8,T=24.5,H=14.0,R=0.0\r\n
             string line = Encoding.ASCII.GetString(data);
 
-            int p = line.IndexOf('>');
-            line = line.Substring(p + 1);
             string[] items = line.Split(',');
-            for (int i = 0; i < items.Length; ++i)
+            if (items.Length != 7)
             {
-                items[i] = items[i].Trim();
-                if (i == 6)
-                {
-                    int d = 0;
-                    if (int.TryParse(items[i], out d))
-                    {
-                        items[i] = d.ToString();
-                    }
-                }
+                return null;
             }
+
+            if (!items[0].Equals("0R0"))
+            {
+                return null;
+            }
+
+            if (!items[1].StartsWith("S="))
+            {
+                return null;
+            }
+            else
+            { 
+                items[1] = items[1].Substring(2); 
+            }
+
+            if (!items[2].StartsWith("D="))
+            {
+                return null;
+            }
+            else
+            {
+                items[2] = items[2].Substring(2); 
+            }
+
+            if (!items[3].StartsWith("P="))
+            {
+                return null;
+            }
+            else
+            {
+                items[3] = items[3].Substring(2);
+            }
+
+            if (!items[4].StartsWith("T="))
+            {
+                return null;
+            }
+            else
+            {
+                items[4] = items[4].Substring(2);
+            }
+
+            if (!items[5].StartsWith("H="))
+            {
+                return null;
+            }
+            else
+            {
+                items[5] = items[5].Substring(2);
+            }
+
+            if (!items[6].StartsWith("R=") || !items[6].EndsWith("\r\n"))
+            {
+                return null;
+            }
+            else
+            {
+                items[6] = items[6].Substring(2, items[6].Length - 4);
+            }
+
             return items;
         }
 
@@ -611,12 +646,16 @@ namespace Scada.Declare
         public override bool OnReceiveData(byte[] line)
         {
             string strLine = Encoding.ASCII.GetString(line);
+
             // 判断返回值是否为重置探测器，如是，则不存储数据库。
+            /*
             if (strLine.Equals(">OK\r\n"))
             {
                 RecordManager.DoSystemEventRecord(this, "Reset Weather Station Succeeful!", RecordType.Event);
                 return false;
             }
+             * */
+
 
             return true;
         }

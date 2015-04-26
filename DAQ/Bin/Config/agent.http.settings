@@ -2,11 +2,10 @@
 <settings>
   <!-- Default Port is 6000 and 7000 -->
   <datacenters>
-    
-    <datacenter2 BaseUrl="http://219.237.221.41:8080/" />
     <!--
-    <datacenter2 BaseUrl="http://127.0.0.1:8080/" />
+    <datacenter2 BaseUrl="http://211.103.184.100:8080/" />
     -->
+    <datacenter2 BaseUrl="http://219.237.221.41:8080/" />
   </datacenters>
   <!-- NOTICE SNO debug-data-time="2013-11-30 20:33:00"-->
   <site sysname="" sysst="213213123213123213" adapter="" name="" station="128" sno="0313A08" mn="0313A080000000">
@@ -40,7 +39,7 @@
       <code field="Pressure">0901040103</code>
       <code field="Windspeed">0901040106</code>
       <code field="Direction">0901040105</code>
-      <code field="Raingauge">0901040104</code>
+      <code field="Rainspeed">0901040104</code>
       <code field="IfRain">0901040107</code>
     </device>
 
@@ -99,7 +98,11 @@
       <code field="channeldata" type="str">00200203</code>
       <code field="doserate">00200204</code>
       <code field="temperature">00200205</code>
-      <code field="highvoltage">00200206</code>      
+      <code field="highvoltage">00200206</code>
+      <code field="BgSimilarity">00200207</code> 
+      <code field="cps">00200208</code>
+      <code field="k1">00200209</code>
+      <code field="k0">00200210</code> 
     </device>
 
     <!-- NOTICE -->

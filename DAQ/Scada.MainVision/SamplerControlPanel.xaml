@@ -29,6 +29,11 @@
             <StackPanel Orientation="Vertical">
                 <TextBlock x:Name="StatusBox" Margin="5,5,5,5"></TextBlock>
                 <StackPanel Orientation="Horizontal">
+                    <Label x:Name="Text7" Content="选择采样方式:" Margin="0,0,20,0"/>
+                    <RadioButton x:Name="RadioSamplebyTime" Content="定时采样" Margin="0,5,20,0" Checked="RadioSamplebyTime_Checked"/>
+                    <RadioButton x:Name="RadioSamplebyVolume" Content="定量采样" Margin="0,5,20,0" Checked="RadioSamplebyVolume_Checked"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
                     <Label x:Name="Text4" Content="输入采样时间" Margin="0,0,20,0"/>
                     <TextBox x:Name="TimeSettingText" Margin="0,5,5,5" Width="100"/>
                     <Label x:Name="Text5" Content="(小时)" Margin="0,0,20,0"/>
@@ -62,6 +67,10 @@
                             x:Name="DisconnectButton" Click="OnDisconnectButton" 
                             Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">断开连接</Button>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                <Label>状态：</Label>
+                <Label x:Name="StatusLabel"></Label>
+                    </StackPanel>
             </StackPanel>
         </GroupBox>
 

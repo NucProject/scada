@@ -77,7 +77,7 @@ namespace Scada.Device.Siemens
         private string tableName;
 
         // 循环时间5s
-        private int interval = 5000;
+        private int interval = 2000;
 
         // mv中启动、关闭
         private bool stopping = false;
@@ -115,38 +115,43 @@ namespace Scada.Device.Siemens
 
         }
 
-        private void PutDeviceFile(bool running)
+        // 生成同步文件 （与MV同步）
+        private void PutSynFile(string strFlag)
         {
             string statusPath = ConfigPath.GetConfigFilePath("status");
+            /*
             if (!Directory.Exists(statusPath))
             {
                 Directory.CreateDirectory(statusPath);
             }
+             * */
 
-            string relFileName = string.Format("status\\@{0}-running", this.deviceKey);
+            string relFileName = string.Format("status\\@{0}-{1}", this.deviceKey, strFlag);
             string fileName = ConfigPath.GetConfigFilePath(relFileName);
 
-            if (running)
+            if (!File.Exists(fileName))
             {
-                try
-                {
-                    using (File.Create(fileName))
-                    {
-                    }
-                }
-                catch (Exception)
-                { }
+                File.Create(fileName);
             }
-            else
-            {
-                try
-                {
-                    File.Delete(fileName);
-                }
-                catch (Exception)
-                {
+        }
 
-                }
+        // 移除同步文件 （与MV同步）
+        private void RemoveSynFile(string strFlag)
+        {
+            string statusPath = ConfigPath.GetConfigFilePath("status");
+            /*
+            if (!Directory.Exists(statusPath))
+            {
+                Directory.CreateDirectory(statusPath);
+            }
+             * */
+
+            string relFileName = string.Format("status\\@{0}-{1}", this.deviceKey, strFlag);
+            string fileName = ConfigPath.GetConfigFilePath(relFileName);
+
+            if (File.Exists(fileName))
+            {
+                File.Delete(fileName);
             }
         }
 
@@ -315,7 +320,7 @@ namespace Scada.Device.Siemens
             }
         }
 
-        // 每5s循环一次
+        // 每2s循环一次
         private void OnDataTimer(object sender, EventArgs e)
         {
             try
@@ -333,7 +338,9 @@ namespace Scada.Device.Siemens
 
                     if (this.start)
                     {
-                        // Start
+                        // 运行中（刚连上时即发现设备处于运行中），同步给mv
+                        PutSynFile("running");
+
                         DateTime time;
                         if (this.OnRightTime(out time))
                         {
@@ -358,7 +365,8 @@ namespace Scada.Device.Siemens
                                 
                                 this.start = false;
                                 RecordManager.DoSystemEventRecord(this, string.Format("Stopped SID={0}", this.Sid), RecordType.Event, true);
-                                this.PutDeviceFile(false);
+
+                                RemoveSynFile("running");
                             }
                             byte statusb = (status == "1") ? (byte)1 : (byte)0;
 
@@ -408,7 +416,9 @@ namespace Scada.Device.Siemens
                     }
                     else
                     {
-                        // Not start
+                        // 未启动，同步给mv
+                        RemoveSynFile("running");
+
                         if (status == "0")
                         {
                             this.start = false;
@@ -432,7 +442,9 @@ namespace Scada.Device.Siemens
                             {
                                 this.Sid = string.Format("SID-{0}", this.beginTime.ToString("yyyyMMdd-HHmmss"));
                             }
-                            this.PutDeviceFile(true);
+
+                            // 同步至mv，设备启动
+                            PutSynFile("running");
                         }
                     }
                 }
@@ -478,6 +490,8 @@ namespace Scada.Device.Siemens
             {
                 RecordManager.DoSystemEventRecord(this, string.Format("Disconnect:{0}", e.Message), RecordType.Error);
             }
+
+            RemoveSynFile("connecting");
         }
 
         private void MarkEndTime(DateTime endTime)
@@ -534,8 +548,10 @@ namespace Scada.Device.Siemens
             else
             {
                 RecordManager.DoSystemEventRecord(this, string.Format("AddItems Failed"), RecordType.Error, true);
-
             }
+
+            // 连接成功，与mv同步
+            PutSynFile("connecting");
         }
 
         public override bool Running

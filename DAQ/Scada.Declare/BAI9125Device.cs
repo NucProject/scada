@@ -10,15 +10,16 @@ using Scada.Common;
 using System.Reflection;
 using System.Globalization;
 using Scada.Config;
+using System.Data.Sql;
+using System.Data.SqlClient;
 
 namespace Scada.Declare
 {
     /*
      * Weather: Send ':D' every 30s to get the data.
      * Weather: Send ':S' every 24h to reset the weather device, to reset the rain gauge value
-     * 该设备硬件本身存在问题：发送查询命令时，有时候没有任何返回数据。故采用每30s内多次发送，而仅在归一化时间接收。
      */
-    public class WeatherDevice : Device
+    public class Bai9125Device : Device
 	{
 		private const int ComDataBits = 8;
 
@@ -38,10 +39,10 @@ namespace Scada.Declare
 
 		private bool isVirtual = false;
 
-        // retrieve data command
+        // retrieve gammalong command
 		private byte[] actionSend1 = null;
 
-        // reset device command
+        // retrieve emissionlong command
         private byte[] actionSend2 = null;
 
         private int actionInterval = 0;
@@ -62,22 +63,56 @@ namespace Scada.Declare
 
 		private List<byte> exampleBuffer = new List<byte>();
 
+        // do not support virtual device
+        private bool IsRealDevice = true;
 
 		private string error = "No Error";
-
-        // 假的风速数据
-        private string falsevalue;
 
         // private static int MaxDelay = 10;
 
         private DateTime currentRecordTime = default(DateTime);
 
-        private byte[] lastLine;
+        private string gammalong;
 
-        // Serial port sleep 400 ms as default before read
-        private int bufferSleep = 400;
+        private string gammalongcps;
 
-		public WeatherDevice(DeviceEntry entry)
+        private string emissionlong;
+
+        private string emissionlongcps;
+
+        private string betacps;
+
+        private string status;
+
+        private string valve1;
+
+        private string valve2;
+
+        private string valve3;
+
+        private string IPAdress;
+
+        private string UID;
+
+        private string pwd;
+
+        private string database;
+
+        private string tabel;
+
+        private SqlConnection con;
+
+        private string[] data;
+
+        private SqlDataReader reader;
+
+        // Serial port sleep 200 ms as default before read
+        private int bufferSleep = 200;
+
+        // init status for first start (第一次重启时需要重置设备，以后每天重置一次)
+        private bool initStatus = false;
+
+		public Bai9125Device(DeviceEntry entry)
 		{
             this.entry = entry;
 			if (!this.Initialize(entry))
@@ -87,7 +122,7 @@ namespace Scada.Declare
 			}
 		}
 
-        ~WeatherDevice()
+        ~Bai9125Device()
         {
         }
 
@@ -106,19 +141,20 @@ namespace Scada.Declare
 			StringValue parity = (StringValue)entry[DeviceEntry.Parity];
 			this.parity = SerialPorts.ParseParity(parity);
 
-            // 
-            this.actionSend1 = Encoding.ASCII.GetBytes((StringValue)entry["ActionSend1"]);
-            this.actionSend2 = Encoding.ASCII.GetBytes((StringValue)entry["ActionSend2"]);
+            this.actionSend1 = Encoding.ASCII.GetBytes((StringValue)entry["ActionSend1"] + "\r");
 
-            // 仅用于假的风速数据
-            this.falsevalue = (StringValue)entry["Falsevalue"];
-			
-			// Virtual On
-			string isVirtual = (StringValue)entry[DeviceEntry.Virtual];
-			if (isVirtual != null && isVirtual.ToLower() == "true")
-			{
-				this.isVirtual = true;
-			}
+            this.actionSend2 = Encoding.ASCII.GetBytes((StringValue)entry["ActionSend2"] + "\r");
+
+            this.IPAdress = (StringValue)entry["IP"];
+
+            this.UID = (StringValue)entry["uid"];
+
+            this.pwd = (StringValue)entry["pwd"];
+
+            this.database = (StringValue)entry["database"];
+
+            this.tabel = (StringValue)entry["table"];
+            
 
             string bufferSleepString = (StringValue)entry["BufferSleep"];
             if (bufferSleepString != null)
@@ -156,24 +192,8 @@ namespace Scada.Declare
             List<FieldConfig> fieldConfigList = ParseDataFieldConfig(fieldsConfigStr);
 			this.fieldsConfig = fieldConfigList.ToArray<FieldConfig>();
 
-			if (!this.IsRealDevice)
-			{
-				string el = (StringValue)entry[DeviceEntry.ExampleLine];
-				el = el.Replace("\\r", "\r");
-				el = el.Replace("\\n", "\n");
-
-				this.exampleLine = el;
-			}
 			return true;
 		}
-
-        public bool IsRealDevice
-        {
-            get
-            {
-                return !this.isVirtual;
-            }
-        }
 
 		private bool IsOpen
 		{
@@ -197,7 +217,7 @@ namespace Scada.Declare
                 this.serialPort.ReadTimeout = 10000;        // this.readTimeout;
 
                 this.serialPort.RtsEnable = true;
-                this.serialPort.NewLine = "/r/n";	        //?
+                this.serialPort.NewLine = "\r";	        //?
                 this.serialPort.DataReceived += this.SerialPortDataReceived;
 
                 // Real Devie begins here.
@@ -238,8 +258,8 @@ namespace Scada.Declare
 
         private void StartSenderTimer(int interval)
         {
-            // timer 每5s一次
-            int minInterval = 5;
+            // timer 每2s一次
+            int minInterval = 2;
             if (MainApplication.TimerCreator != null)
             {
                 this.senderTimer = MainApplication.TimerCreator.CreateTimer(minInterval);
@@ -275,25 +295,11 @@ namespace Scada.Declare
                 Thread.Sleep(this.bufferSleep);
 
 				int n = this.serialPort.BytesToRead;
-                if (n == 0)
-                {
-                    return null;
-                }
-                else
-                {
-                    byte[] buffer = new byte[n];
+				byte[] buffer = new byte[n];
 
-				    int r = this.serialPort.Read(buffer, 0, n);
-                    if (r != n)
-                    {
-                        RecordManager.DoSystemEventRecord(this, "SerialPort Read Error");
+				int r = this.serialPort.Read(buffer, 0, n);
 
-                        return null;
-                    }
-
-				    return buffer;
-                }
-				
+				return buffer;
 			}
 			else // Virtual Device~!
 			{
@@ -307,87 +313,6 @@ namespace Scada.Declare
                     return this.GetExampleLine();
                 }
 			}
-		}
-
-        private string[] Search(byte[] data, byte[] lastData)
-		{
-            string[] ret = this.Search(data);
-
-            // 东北气象站坏了，给个假的值
-            if (this.falsevalue == "true")
-            {
-                double windspeed = 0;
-                if (double.TryParse(ret[7], out windspeed))
-                {
-                    if (windspeed <= 0)
-                    {
-                        Random ro = new Random();
-                        windspeed = 0.5 + ro.NextDouble();
-                        windspeed = Math.Round(windspeed, 1);
-                        ret[7] = windspeed.ToString();
-                    }
-                }
-            }
-            
-            double rd = 0;
-            double r = 0;
-            if (double.TryParse(ret[8], out r))
-            {
-                if (lastData != null)
-                {
-                    string[] ld = this.Search(lastData);
-                    double rl = 0;
-                    if (double.TryParse(ld[8], out rl))
-                    {
-                        rd = r - rl;
-                    }
-                }
-                else
-                {
-                    rd = 0;
-                }
-            }
-            else
-            {
-                // TODO: ? Average.?
-                ret[8] = "0";
-            }
-
-            // 每次重置之后，rd值为负数，此时需要把rd重置
-            if (rd < 0)
-            {
-                rd = 0;
-            }
-
-            // caculate rainspeed 
-            if (ret.Length >= 9)
-            {
-                double speed = Math.Round(rd, 1);
-                ret[9] = speed.ToString();
-            }
-
-            // 给感雨赋值
-            if (ret.Length >= 10)
-            {
-                if (rd > 0)
-                {
-                    ret[10] = "1";
-                }
-                else
-                {
-                    ret[10] = "0";
-                }
-            }
-
-            // caculate pressure
-            double pressure = 0;
-            if (double.TryParse(ret[5], out pressure))
-            {
-                pressure = Math.Round(pressure / 10, 1);
-                ret[5] = pressure.ToString();
-            }
-
-            return ret;
 		}
 
         private string[] Search(byte[] data)
@@ -416,17 +341,14 @@ namespace Scada.Declare
 		private byte[] GetLineBytes(byte[] data)
 		{
             int len = data.Length;
-            if (len < 2)
+
+            if (data[len - 1] == (byte)0x0d)
             {
+                data[len - 1] = 0;
                 return data;
             }
 
-            if (data[len - 2] == (byte)0x0d && data[len - 1] == (byte)0x0a)
-            {
-                return data;
-            }
-            
-            return null;
+            else { return null; }
 		}
 
 		private void SerialPortDataReceived(object sender, SerialDataReceivedEventArgs evt)  
@@ -436,10 +358,6 @@ namespace Scada.Declare
 			{
 				handled = false;
 				byte[] buffer = this.ReadData();
-                if (buffer == null)
-                {
-                    return;
-                }
 
 				byte[] line = this.GetLineBytes(buffer);
 				if (line == null || line.Length == 0)
@@ -466,30 +384,18 @@ namespace Scada.Declare
 
         internal void RecordData(byte[] line)
         {
-            DateTime rightTime = default(DateTime);
-            if (!this.recordTimePolicy.NowAtRightTime(out rightTime) ||
-                this.currentRecordTime == rightTime)
-            {
-                return;
-            }
-
             DeviceData dd;
-            if (!this.GetDeviceData(line, rightTime, out dd))
+            if (!this.GetDeviceData(line, this.currentRecordTime, out dd))
             {
-                /*
                 dd = new DeviceData(this, null);
                 dd.OriginData = DeviceData.ErrorFlag;
                 this.SynchronizationContext.Post(this.DataReceived, dd);
-                 * */
                 return;
             }
 
             // Post to Main thread to record.
             dd.OriginData = Encoding.ASCII.GetString(line);
             this.SynchronizationContext.Post(this.DataReceived, dd);
-
-            // 只有在存储完成之后，才能记录
-            this.currentRecordTime = rightTime;
         }
 
         private void PostStartStatus()
@@ -502,31 +408,65 @@ namespace Scada.Declare
 		protected bool GetDeviceData(byte[] line, DateTime time, out DeviceData dd)
 		{
             dd = default(DeviceData);
-
-            string[] data = null;
+           /*
             try
             {
-                data = this.Search(line, this.lastLine);
-                this.lastLine = line;
-
-                if (data == null || data.Length == 0)
+                //读取水采样电脑的数据库
+                string constr = "server=" + this.IPAdress + ";database=" + this.database + ";uid=" + this.UID + ";pwd=" + this.pwd;
+                this.con = new SqlConnection(constr);
+                con.Open();
+                string sqlcommand = "select Value1,Value2,Value3 from BAI9125_rec";
+                SqlCommand cmd = new SqlCommand(sqlcommand, con);
+                this.reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    return false;
+                    valve1 = reader[0].ToString();
+                    valve2 = reader[1].ToString();
+                    valve3 = reader[2].ToString();
+                    data[6] = valve1;
+                    data[7] = valve2;
+                    data[8] = valve3;
                 }
-                dd.Time = time;
-                object[] fields = Device.GetFieldsData(data, time, this.fieldsConfig);
-                dd = new DeviceData(this, fields);
-                dd.InsertIntoCommand = this.insertIntoCommand;
+                this.reader.Close();
+                this.con.Close();
             }
-
-            catch (Exception e)
+            catch (Exception ex)
             {
-                string strLine = Encoding.ASCII.GetString(line);
-                string errorMsg = string.Format("GetDeviceData() Fail, Data={0}", strLine) + e.Message;
-                RecordManager.DoSystemEventRecord(this, errorMsg);
-
-                return false;
+                data[6] = "0";
+                data[7] = "0";
+                data[8] = "0";
+                this.reader.Close();
+                this.con.Close();
             }
+            */
+            
+            
+            //读取水采样电脑数据库结束
+
+
+            this.data = new string[9];
+            //假的beta
+            Random rad = new Random();
+            double d = rad.NextDouble();//double本来就是产生0-1之间小数的
+            string betafake = Convert.ToString(d.ToString("#0.0"));//这里输出是控制输出几位数，0.00表示小数点后两位！假的Beta值
+            //fill the measurement to data
+            data[0] = this.gammalong;
+            data[1] = this.gammalongcps;
+            data[2] = this.emissionlong;
+            data[3] = this.emissionlongcps;
+            data[4] = betafake;
+            data[5] = "0";
+            data[6] = "0";
+            data[7] = "0";
+            data[8] = "0";
+
+           
+
+
+            dd.Time = time;
+            object[] fields = Device.GetFieldsData(data, time, this.fieldsConfig);
+			dd = new DeviceData(this, fields);
+			dd.InsertIntoCommand = this.insertIntoCommand;
 
 			return true;
 		}
@@ -548,7 +488,6 @@ namespace Scada.Declare
 
             try
             {
-                /*
                 // 归一化时间
                 DateTime rightTime = default(DateTime);
                 if (!this.recordTimePolicy.NowAtRightTime(out rightTime) ||
@@ -557,25 +496,19 @@ namespace Scada.Declare
                     return;
                 }
                 this.currentRecordTime = rightTime;
-                 * */
 
-                // 记录当前值
+                // 取Gammalong
                 if (this.IsRealDevice)
                 {
                     this.serialPort.Write(this.actionSend1, 0, this.actionSend1.Length);
                 }
-                
-                // 23:59时重置气象探测器,可能会多次发送重置命令
-                DateTime currentTime = DateTime.Now;
-                if (currentTime.ToString("HH:mm").Equals("23:59"))
-                {
-                    // 等待1s，再发送重置命令
-                    Thread.Sleep(1000);
 
-                    if (this.IsRealDevice)
-                    {
-                        this.serialPort.Write(this.actionSend2, 0, this.actionSend2.Length);
-                    }
+                Thread.Sleep(400);
+
+                // 取Gammaemission
+                if (this.IsRealDevice)
+                {
+                    this.serialPort.Write(this.actionSend2, 0, this.actionSend2.Length);
                 }
                 
                 #region Virtual-Device
@@ -589,6 +522,8 @@ namespace Scada.Declare
             {
                 RecordManager.DoSystemEventRecord(this, "Write COM Data Error: " + e.Message, RecordType.Error);
             }
+
+            
 		}
 
         public override void Stop()
@@ -610,15 +545,32 @@ namespace Scada.Declare
 
         public override bool OnReceiveData(byte[] line)
         {
-            string strLine = Encoding.ASCII.GetString(line);
-            // 判断返回值是否为重置探测器，如是，则不存储数据库。
-            if (strLine.Equals(">OK\r\n"))
+            string strData = System.Text.Encoding.Default.GetString(line);
+
+            if (strData.Contains("900100010100000004000000"))
             {
-                RecordManager.DoSystemEventRecord(this, "Reset Weather Station Succeeful!", RecordType.Event);
+                string strGammalongSci = strData.Substring(25, 11);
+                string strGammalong = Convert.ToDecimal(Convert.ToDouble(strGammalongSci)).ToString();
+                this.gammalong = strGammalong;
+
+                this.gammalongcps = Math.Round(Convert.ToDecimal(Convert.ToDouble(strGammalong)) / 8300, 3).ToString();
+                    
+                // 这里只取值，不存储
                 return false;
             }
+            else if (strData.Contains("900100010100000000004000"))
+            {
+                string strEmissionlongSci = strData.Substring(25, 11);
+                string strEmissionlong = Convert.ToDecimal(Convert.ToDouble(strEmissionlongSci)).ToString();
+                this.emissionlong = strEmissionlong;
 
-            return true;
+                this.emissionlongcps = Math.Round(Convert.ToDecimal(Convert.ToDouble(strEmissionlong)) / 8300, 3).ToString();
+
+                // 这里进行存储
+                return true;
+            }
+
+            else { return false; }
         }
 
 #region virtual-device

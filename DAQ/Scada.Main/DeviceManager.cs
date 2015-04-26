@@ -305,6 +305,10 @@ namespace Scada.Main
             {
                 return new WeatherDevice(entry);
             }
+            else if (typeof(WeatherDevice_Zhongming).ToString() == className)
+            {
+                return new WeatherDevice_Zhongming(entry);
+            }
 
 			// Other Device defined in some Assemblies.
             if (entry[DeviceEntry.Assembly] != null)
