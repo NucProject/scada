@@ -718,6 +718,7 @@ namespace Scada.Data.Client
             else if (ne == NotifyEvents.SendDataOK)
             {
                 this.UpdateSendDataRecord(p.DeviceKey, false);
+                this.debugConsole.Text += string.Format("{0}\n", p.Message);
             }
             else if (ne == NotifyEvents.SendDataFailed)
             {

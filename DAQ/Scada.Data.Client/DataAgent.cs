@@ -229,6 +229,7 @@ namespace Scada.Data.Client
                     Byte[] result = wc.UploadData(uri, "POST", data);
                     string strResult = Encoding.ASCII.GetString(result);
                     this.NotifyEvent(this, NotifyEvents.SendDataOK, new Notify() { DeviceKey = packet.DeviceKey, Message = strResult });
+                    this.NotifyEvent(this, NotifyEvents.DebugMessage, new Notify() { DeviceKey = packet.DeviceKey, Message = strResult });
 
                     return true;
                 }
