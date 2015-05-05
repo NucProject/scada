@@ -164,6 +164,17 @@ namespace Scada.MainVision
             }
             
             panel.SetData(Get(d, "time", ""), Get(d, Doserate, "nSv/h"));
+
+
+            if (!string.IsNullOrEmpty(Settings.Instance.NaIAlarm))
+            {
+                double alarm;
+                if (double.TryParse(Settings.Instance.NaIAlarm, out alarm))
+                {
+                    string v = Get(d, Doserate, "");
+                    this.MarkNaIAlarm(v, alarm, panel, 1);
+                }
+            }
         }
 
         private void UpdatePanel_Weather(SmartDataPane panel)
@@ -488,6 +499,16 @@ namespace Scada.MainVision
         }
 
         private void MarkHpicAlarm(string v, double alarm, SmartDataPane pane, int index)
+        {
+            double dv;
+            if (double.TryParse(v, out dv))
+            {
+                pane.SetDataColor(index, dv > alarm);
+            }
+
+        }
+
+        private void MarkNaIAlarm(string v, double alarm, SmartDataPane pane, int index)
         {
             double dv;
             if (double.TryParse(v, out dv))

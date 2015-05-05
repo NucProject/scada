@@ -78,6 +78,7 @@ namespace Scada.MainVision
 			this.LoadDataProvider();
 
             this.UpdateHpicThreshold();
+            this.UpdateNaIThreshold();
 
             // Device List
             this.DeviceList.ClickDeviceItem += this.OnDeviceItemClicked;
@@ -504,6 +505,7 @@ namespace Scada.MainVision
             this.OpenProcessByName("Scada.MainSettings.exe", false, () => 
             {
                 this.UpdateHpicThreshold();
+                this.UpdateNaIThreshold();
             });
         }
 
@@ -518,6 +520,14 @@ namespace Scada.MainVision
             DeviceEntry entry = DeviceEntry.GetDeviceEntry("scada.hpic", filePath);
 
             Settings.Instance.HpicAlarm = (StringValue)entry["Alarm1"];
+        }
+
+        private void UpdateNaIThreshold()
+        {
+            string filePath = GetDeviceConfigFile("scada.naidevice");
+            DeviceEntry entry = DeviceEntry.GetDeviceEntry("scada.naidevice", filePath);
+
+            Settings.Instance.NaIAlarm = (StringValue)entry["Alarm1"];
         }
 
         private bool OpenProcess(string procName)

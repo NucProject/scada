@@ -35,6 +35,8 @@ namespace Scada.Declare
 
         private const int TimeZone = 8;
 
+        public int factor { get; set; }
+
         // private int index = 0;
 
 		public WebFileDevice(DeviceEntry entry)
@@ -75,7 +77,11 @@ namespace Scada.Declare
             string tableFields2 = (StringValue)entry["TableFields2"];
             this.InitializeNaITable(tableName2, tableFields2, out this.insertIntoCommand2);
 
-
+            this.factor = 1;
+            if (entry["factor1"] != null)
+            {
+                this.factor = (StringValue)entry["factor1"];
+            }
             // Virtual On
             string isVirtual = (StringValue)entry[DeviceEntry.Virtual];
             if (isVirtual != null && isVirtual.ToLower() == "true")
@@ -284,12 +290,23 @@ namespace Scada.Declare
 
         private DeviceData ParseNuclideData(NuclideData nd, DateTime time)
         {
+            double doserate = this.GetDoseRate(nd.DoseRate);
             object[] data = new object[]{
-                time, nd.Name, nd.Activity, nd.Indication, nd.DoseRate, nd.Channel, nd.Energy
+                time, nd.Name, nd.Activity, nd.Indication, doserate.ToString(), nd.Channel, nd.Energy
             };
             DeviceData dd = new DeviceData(this, data);
             dd.InsertIntoCommand = this.insertIntoCommand2;
             return dd;
+        }
+
+        private double GetDoseRate(string p)
+        {
+            double r = 0.0;
+            if (double.TryParse(p, out r))
+            {
+                return r * this.factor;
+            }
+            return r;
         }
 
         /// <summary>
@@ -452,5 +469,7 @@ namespace Scada.Declare
         {
             return false;
         }
+
+        
     }
 }

@@ -682,7 +682,7 @@ namespace Scada.Controls
 
         private void ExportSearchDataList(object sender, RoutedEventArgs e)
         {
-            this.ExportDataListToFile(this.searchDataSource);
+            this.ExportDataListToFile(this.dataSource);
         }
 
         private void ExportDataListToFile(List<Dictionary<string, object>> dataList)
