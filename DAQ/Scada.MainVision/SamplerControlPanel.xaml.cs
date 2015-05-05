@@ -47,10 +47,11 @@ namespace Scada.MainVision
             this.dataProvider = dataProvider;
         }
 
-        public SamplerControlPanel(string deviceKey)
+        public SamplerControlPanel(string deviceKey, DBDataProvider dataProvider)
         {
             InitializeComponent();
             this.DeviceKey = deviceKey;
+            this.SetDataProvider(dataProvider);
 
             RadioSamplebyTime.IsChecked = true;
             sampling_type = 0;

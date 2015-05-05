@@ -94,7 +94,7 @@ namespace Scada.MainVision
                         panel.HasRealTimeChart = true;
                         panel.GraphView = this.ShowGraphView(panel, dataListener);
                         panel.selectedField = "flow";
-                        panel.ControlPanel = this.ShowControlView(DataProvider.DeviceKey_MDS);
+                        panel.ControlPanel = this.ShowControlView(DataProvider.DeviceKey_MDS, dataProvider);
                         panel.SttPanel = this.ShowSttView(DataProvider.DeviceKey_MDS);
                     }
                     else if (deviceKey == DataProvider.DeviceKey_AIS)
@@ -102,7 +102,7 @@ namespace Scada.MainVision
                         panel.HasRealTimeChart = true;
                         panel.GraphView = this.ShowGraphView(panel, dataListener);
                         panel.selectedField = "flow";
-                        panel.ControlPanel = this.ShowControlView(DataProvider.DeviceKey_AIS);
+                        panel.ControlPanel = this.ShowControlView(DataProvider.DeviceKey_AIS, dataProvider);
                         panel.SttPanel = this.ShowSttView(DataProvider.DeviceKey_AIS);
                     }
                     else if (deviceKey == DataProvider.DeviceKey_Weather)
@@ -250,9 +250,9 @@ namespace Scada.MainVision
             return graphView;
         }
 
-        private Control ShowControlView(string deviceKey)
+        private Control ShowControlView(string deviceKey, DBDataProvider dataProvider)
         {
-            SamplerControlPanel panel = new SamplerControlPanel(deviceKey);
+            SamplerControlPanel panel = new SamplerControlPanel(deviceKey, dataProvider);
             return panel;
         }
 
