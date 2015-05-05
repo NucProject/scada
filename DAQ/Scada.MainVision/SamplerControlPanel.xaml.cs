@@ -1,4 +1,5 @@
-﻿using Scada.Common;
+﻿using MySql.Data.MySqlClient;
+using Scada.Common;
 using Scada.Config;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,15 @@ namespace Scada.MainVision
 
         private int factor = 1;
 
+        public MySql.Data.MySqlClient.MySqlConnection dbConn { get; set; }
+
+        private DBDataProvider dataProvider;
+
+        public void SetDataProvider(DBDataProvider dataProvider)
+        {
+            this.dataProvider = dataProvider;
+        }
+
         public SamplerControlPanel(string deviceKey)
         {
             InitializeComponent();
@@ -51,6 +61,56 @@ namespace Scada.MainVision
             this.StartButton.IsEnabled = false;
             this.StopButton.IsEnabled = false;
             this.ResetButton.IsEnabled = false;
+
+            this.dataPane.Initialize(new string[] { "最近采样时间", "瞬时采样流量", "累计采样流量", "累积采样时间", "滤纸报警", "流量报警", "主电源报警" });
+
+            this.dbConn = this.dataProvider.GetMySqlConnection();
+
+            if (this.dbConn != null)
+            {
+                MySqlCommand cmd = this.dbConn.CreateCommand();
+                var dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+                dispatcherTimer.Tick += (s, evt) =>
+                {
+                    this.RefreshTick(cmd);
+                };
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 20);
+                dispatcherTimer.Start();
+                this.RefreshTick(cmd);
+            }
+            else
+            { return; }
+        }
+
+        private void RefreshTick(MySqlCommand cmd)
+        {
+            this.dataProvider.RefreshTimeNow(cmd);
+            UpdateDataPanel(this.dataPane);
+        }
+
+        private void UpdateDataPanel(SmartDataPane panel)
+        {
+            var d = this.dataProvider.GetLatestEntry(this.DeviceKey == "scada.mds" ? DataProvider.DeviceKey_MDS : DataProvider.DeviceKey_AIS);
+            panel.Check(Get(d, "time", ""));
+            // NOTICE：数据库中没有任何记录时，d的对象仍然可以创建成功，所以需要加入d.Count==0
+            if (d == null || d.Count == 0)
+            {
+                return;
+            }
+
+            //"瞬时采样流量", "累计采样流量", "累积采样时间"
+            panel.SetData(
+                Get(d, "time", ""),
+                Get(d, "flow", "m³/h"),
+                Get(d, "volume", "m³"),
+                Get(d, "hours", "h"),
+                GetAlarm(d, "alarm1", ""),
+                GetAlarm(d, "alarm2", ""),
+                GetAlarm(d, "alarm3", ""));
+
+            MarkAlarm(d, "alarm1", panel, 4);
+            MarkAlarm(d, "alarm2", panel, 5);
+            MarkAlarm(d, "alarm3", panel, 6);
         }
 
         private bool CheckDeviceFile(string strFlag)
@@ -292,5 +352,39 @@ namespace Scada.MainVision
             else { }
         }
 
+
+        private string Get(Dictionary<string, object> d, string key, string s)
+        {
+            string v = this.GetDisplayString(d, key.ToLower());
+            double dv;
+            if (double.TryParse(v, out dv))
+            {
+                return dv.ToString("0.0") + " " + s;
+            }
+            return v + " " + s;
+        }
+
+        private string GetAlarm(Dictionary<string, object> d, string key, string s)
+        {
+            string v = this.GetDisplayString(d, key.ToLower());
+            bool alarm = (v == "1");
+            return alarm ? "报警" : "正常";
+        }
+
+        private void MarkAlarm(Dictionary<string, object> d, string key, SmartDataPane pane, int index)
+        {
+            string v = this.GetDisplayString(d, key.ToLower());
+            bool alarm = (v == "1");
+            pane.SetDataColor(index, alarm);
+        }
+
+        private string GetDisplayString(Dictionary<string, object> d, string key)
+        {
+            if (d.ContainsKey(key))
+            {
+                return (string)d[key];
+            }
+            return string.Empty;
+        }
     }
 }
