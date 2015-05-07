@@ -125,6 +125,10 @@ namespace Scada.MainVision
             columnInfoList.Add(new Controls.Data.ColumnInfo() { Header = "累计流量", BindingName = "volume" });
             columnInfoList.Add(new Controls.Data.ColumnInfo() { Header = "累计时间", BindingName = "hours" });
 
+            columnInfoList.Add(new Controls.Data.ColumnInfo() { Header = "滤纸报警", BindingName = "alarm1" });
+            columnInfoList.Add(new Controls.Data.ColumnInfo() { Header = "流量报警", BindingName = "alarm2" });
+            columnInfoList.Add(new Controls.Data.ColumnInfo() { Header = "主电源报警", BindingName = "alarm3" });
+
             foreach (var columnInfo in columnInfoList)
             {
                 GridViewColumn col = new GridViewColumn();

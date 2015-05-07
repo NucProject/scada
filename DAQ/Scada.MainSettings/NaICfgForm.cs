@@ -28,6 +28,7 @@ namespace Scada.MainSettings
                 {DeviceEntry.IPAddress, this.settings.IPAddress},
                 {DeviceEntry.RecordInterval, this.settings.Frequence.ToString()},
                 {DeviceEntry.DeviceSn, this.settings.DeviceSn},
+                {"factor1", this.settings.Factor.ToString()}
                 
             });
         }
@@ -36,8 +37,6 @@ namespace Scada.MainSettings
         {
             this.settings = (NaISettings)this.Reset();
         }
-
-        
 
         private void NaICfgForm_Load(object sender, EventArgs e)
         {
@@ -57,6 +56,7 @@ namespace Scada.MainSettings
             settings.Frequence = (StringValue)entry[DeviceEntry.RecordInterval];
             settings.MinuteAdjust = (StringValue)entry["MinuteAdjust"];
             settings.IPAddress = (StringValue)entry[DeviceEntry.IPAddress];
+            settings.Factor = (StringValue)entry["factor1"];
             return settings;
         }
 

@@ -243,7 +243,7 @@ namespace Scada.MainVision
             var entry = cfg[deviceKey];
 
             ListViewPanel panel = this.panelManager.CreateDataViewPanel(this.dataProvider, entry);
-
+            
             this.dataProvider.CurrentDeviceKey = deviceKey;
             
 			panel.CloseClick += this.ClosePanelButtonClick;

@@ -684,6 +684,9 @@ namespace Scada.MainVision
                             data.Add("endtime", reader.GetString("endtime"));
                             data.Add("volume", reader.GetString("volume"));
                             data.Add("hours", reader.GetString("hours"));
+                            data.Add("alarm1", reader.GetString("alarm1"));
+                            data.Add("alarm2", reader.GetString("alarm2"));
+                            data.Add("alarm3", reader.GetString("alarm3"));
                             ret.Add(data);
                         }
 

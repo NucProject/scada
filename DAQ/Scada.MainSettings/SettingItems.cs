@@ -233,6 +233,15 @@ namespace Scada.MainSettings
             get { return this.minuteAdjust; }
             set { this.minuteAdjust = value; }
         }
+
+        [Category("NaI谱仪")]
+        [DisplayName("剂量率因子")]
+        [DefaultValue(1.0)]
+        public double Factor
+        {
+            get;
+            set;
+        }
     }
 
     /// <summary>

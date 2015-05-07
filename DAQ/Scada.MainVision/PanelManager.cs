@@ -52,6 +52,7 @@ namespace Scada.MainVision
         public ListViewPanel CreateDataViewPanel(DBDataProvider dataProvider, ConfigEntry entry, bool showList = true)
 		{
             string deviceKey = entry.DeviceKey;
+
             string displayName = entry.DisplayName;
             if (this.panelDict.ContainsKey(deviceKey))
             {
@@ -68,15 +69,25 @@ namespace Scada.MainVision
             {
                 // !
                 ListViewPanel panel = new ListViewPanel(dataProvider, entry);
-                DataListener dataListener = dataProvider.GetDataListener(deviceKey);
+                DataListener dataListener = null;
                 panel.SetIcon(entry.Icon);
-                panel.AddDataListener(dataListener);
+                
                 if (showList)
                 {
-                    panel.ListView = this.ShowListView(panel, dataListener);
-                    panel.SearchView = this.ShowListView(panel, dataListener);
+                    if (deviceKey != DataProvider.DeviceKey_MDS && deviceKey != DataProvider.DeviceKey_AIS)
+                    {
+                        dataListener = dataProvider.GetDataListener(deviceKey);
 
-                    if (deviceKey != DataProvider.DeviceKey_Dwd && deviceKey != DataProvider.DeviceKey_Shelter)
+                        panel.ListView = this.ShowListView(panel, dataListener);
+                        panel.SearchView = this.ShowListView(panel, dataListener);
+
+                        panel.AddDataListener(dataListener);
+                    }
+
+                    if (deviceKey != DataProvider.DeviceKey_Dwd && 
+                        deviceKey != DataProvider.DeviceKey_Shelter &&
+                        deviceKey != DataProvider.DeviceKey_MDS &&
+                        deviceKey != DataProvider.DeviceKey_AIS)
                     {
                         panel.HasSerachDataChart = true;
                         if (deviceKey == DataProvider.DeviceKey_Hpic)
@@ -91,16 +102,16 @@ namespace Scada.MainVision
 
                     if (deviceKey == DataProvider.DeviceKey_MDS)
                     {
-                        panel.HasRealTimeChart = true;
-                        panel.GraphView = this.ShowGraphView(panel, dataListener);
+                        panel.HasRealTimeChart = false;
+                        //panel.GraphView = this.ShowGraphView(panel, dataListener);
                         panel.selectedField = "flow";
                         panel.ControlPanel = this.ShowControlView(DataProvider.DeviceKey_MDS, dataProvider);
                         panel.SttPanel = this.ShowSttView(DataProvider.DeviceKey_MDS);
                     }
                     else if (deviceKey == DataProvider.DeviceKey_AIS)
                     {
-                        panel.HasRealTimeChart = true;
-                        panel.GraphView = this.ShowGraphView(panel, dataListener);
+                        panel.HasRealTimeChart = false;
+                        //panel.GraphView = this.ShowGraphView(panel, dataListener);
                         panel.selectedField = "flow";
                         panel.ControlPanel = this.ShowControlView(DataProvider.DeviceKey_AIS, dataProvider);
                         panel.SttPanel = this.ShowSttView(DataProvider.DeviceKey_AIS);

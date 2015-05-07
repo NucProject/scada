@@ -356,6 +356,12 @@ namespace Scada.Controls
                 this.CloseClick(this, c);
             };
 
+            if (this.deviceKey == "scada.mds" || this.deviceKey == "scada.ais")
+            {
+                this.RealTimePane.Visibility = System.Windows.Visibility.Collapsed;
+                this.HistoryTimePane.Visibility = System.Windows.Visibility.Collapsed;
+                this.ControlPanelTabItem.IsSelected = true;
+            }
         }
 
         public void AddDataListener(DataListener listener)
