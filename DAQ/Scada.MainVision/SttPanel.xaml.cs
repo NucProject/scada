@@ -107,9 +107,7 @@ namespace Scada.MainVision
             List<Dictionary<string, object>> data = DBDataProvider.Instance.GetSidData(this.deviceKey, dt1, dt2);
             
             this.listView.ItemsSource = null;
-
             this.listView.ItemsSource = data;
-
         }
 
         public ListView AddListView()

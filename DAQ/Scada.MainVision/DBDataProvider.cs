@@ -675,7 +675,6 @@ namespace Scada.MainVision
 
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
-                        
                         while (reader.Read())
                         {
                             var data = new Dictionary<string, object>();
@@ -689,15 +688,11 @@ namespace Scada.MainVision
                             data.Add("alarm3", reader.GetString("alarm3"));
                             ret.Add(data);
                         }
-
-                        
                     }
                 }
             }
             return ret;
         }
-
-
 
         internal List<Dictionary<string, object>> GetDoorStatus(DateTime dt1, DateTime dt2)
         {
@@ -722,7 +717,6 @@ namespace Scada.MainVision
                             {
                                 break;
                             }
-
 
                             if (ifOpen == 0)
                             {

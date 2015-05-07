@@ -63,7 +63,7 @@ namespace Scada.MainVision
             this.StopButton.IsEnabled = false;
             this.ResetButton.IsEnabled = false;
 
-            this.dataPane.Initialize(new string[] { "最近采样时间", "瞬时采样流量", "累计采样流量", "累积采样时间", "滤纸报警", "流量报警", "主电源报警" });
+            // this.dataPane.Initialize(new string[] { "最近采样时间", "瞬时采样流量", "累计采样流量", "累积采样时间", "滤纸报警", "流量报警", "主电源报警" });
 
             this.dbConn = this.dataProvider.GetMySqlConnection();
 
@@ -86,13 +86,13 @@ namespace Scada.MainVision
         private void RefreshTick(MySqlCommand cmd)
         {
             this.dataProvider.RefreshTimeNow(cmd);
-            UpdateDataPanel(this.dataPane);
+            UpdateDataPanel();
         }
 
-        private void UpdateDataPanel(SmartDataPane panel)
+        private void UpdateDataPanel()
         {
             var d = this.dataProvider.GetLatestEntry(this.DeviceKey == "scada.mds" ? DataProvider.DeviceKey_MDS : DataProvider.DeviceKey_AIS);
-            panel.Check(Get(d, "time", ""));
+            // panel.Check(Get(d, "time", ""));
             // NOTICE：数据库中没有任何记录时，d的对象仍然可以创建成功，所以需要加入d.Count==0
             if (d == null || d.Count == 0)
             {
@@ -100,18 +100,19 @@ namespace Scada.MainVision
             }
 
             //"瞬时采样流量", "累计采样流量", "累积采样时间"
-            panel.SetData(
-                Get(d, "time", ""),
-                Get(d, "flow", "m³/h"),
-                Get(d, "volume", "m³"),
-                Get(d, "hours", "h"),
-                GetAlarm(d, "alarm1", ""),
-                GetAlarm(d, "alarm2", ""),
-                GetAlarm(d, "alarm3", ""));
+            // panel.SetData(
 
-            MarkAlarm(d, "alarm1", panel, 4);
-            MarkAlarm(d, "alarm2", panel, 5);
-            MarkAlarm(d, "alarm3", panel, 6);
+            this.DataTimeAllLabel.Content = Get(d, "time", "");
+            this.DataFlowLabel.Content = Get(d, "flow", "m³/h");
+            this.DataFlowAllLabel.Content = Get(d, "volume", "m³");
+            this.DataTimeAllLabel.Content = Get(d, "hours", "h");
+            this.DataAlarm1Label.Content = GetAlarm(d, "alarm1", "");
+            this.DataAlarm2Label.Content = GetAlarm(d, "alarm2", "");
+            this.DataAlarm3Label.Content = GetAlarm(d, "alarm3", "");
+
+            MarkAlarm(d, "alarm1", this.DataAlarm1Label, 4);
+            MarkAlarm(d, "alarm2", this.DataAlarm2Label, 5);
+            MarkAlarm(d, "alarm3", this.DataAlarm3Label, 6);
         }
 
         private bool CheckDeviceFile(string strFlag)
@@ -372,11 +373,21 @@ namespace Scada.MainVision
             return alarm ? "报警" : "正常";
         }
 
-        private void MarkAlarm(Dictionary<string, object> d, string key, SmartDataPane pane, int index)
+        private void MarkAlarm(Dictionary<string, object> d, string key, Label label, int index)
         {
             string v = this.GetDisplayString(d, key.ToLower());
             bool alarm = (v == "1");
-            pane.SetDataColor(index, alarm);
+            // pane.SetDataColor(index, alarm);
+
+            if (alarm)
+            {
+                label.Foreground = Brushes.Red;
+            }
+            else
+            {
+                label.Foreground = Brushes.Black;
+            }
+
         }
 
         private string GetDisplayString(Dictionary<string, object> d, string key)

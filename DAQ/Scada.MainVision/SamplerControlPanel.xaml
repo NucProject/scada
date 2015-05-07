@@ -26,7 +26,7 @@
             
         </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Row="0" Header=" 控制面板 ">
+        <GroupBox Grid.Row="0" Header=" 控制面板 " Foreground="Black">
             <StackPanel Orientation="Vertical">
                 <TextBlock x:Name="StatusBox" Margin="5,5,5,5"></TextBlock>
                 <StackPanel Orientation="Horizontal">
@@ -75,7 +75,52 @@
             </StackPanel>
         </GroupBox>
 
-        <Grid Grid.Row="1" Width="300">
+        <GroupBox Grid.Row="1" Header=" 显示面板 " Foreground="Black">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <Label>时间：</Label>
+                    <Label x:Name="DataTimeLabel"></Label>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label>瞬时流量：</Label>
+                    <Label x:Name="DataFlowLabel"></Label>
+                </StackPanel>
+                <!-- -->
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
+                        <Label>累积采样流量：</Label>
+                        <Label x:Name="DataFlowAllLabel"></Label>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label>累积采样时间：</Label>
+                        <Label x:Name="DataTimeAllLabel"></Label>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- -->
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
+                        <Label>滤纸报警：</Label>
+                        <Label x:Name="DataAlarm1Label"></Label>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label>流量报警：</Label>
+                        <Label x:Name="DataAlarm2Label"></Label>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label>主电源报警：</Label>
+                        <Label x:Name="DataAlarm3Label"></Label>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+           
+        </GroupBox>
+        
+        <Grid Grid.Row="1" Width="300" Visibility="Collapsed">
             <m:SmartDataPane x:Name="dataPane" Title="" Canvas.Left="696" Canvas.Top="324">
             </m:SmartDataPane>
         </Grid>
