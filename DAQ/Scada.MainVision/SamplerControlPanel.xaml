@@ -77,6 +77,12 @@
 
         <GroupBox Grid.Row="1" Header=" 显示面板 " Foreground="Black">
             <StackPanel Orientation="Vertical">
+                
+                <StackPanel Orientation="Horizontal">
+                    <Label>采样状态：</Label>
+                    <Label x:Name="DataStatusLabel"></Label>
+                </StackPanel>
+                
                 <StackPanel Orientation="Horizontal">
                     <Label>最近采样时间：</Label>
                     <Label x:Name="DataTimeLabel"></Label>

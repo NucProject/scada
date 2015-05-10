@@ -75,7 +75,7 @@ namespace Scada.MainVision
                 {
                     this.RefreshTick(cmd);
                 };
-                dispatcherTimer.Interval = new TimeSpan(0, 0, 20);
+                dispatcherTimer.Interval = new TimeSpan(0, 0, 5);
                 dispatcherTimer.Start();
                 this.RefreshTick(cmd);
             }
@@ -85,7 +85,8 @@ namespace Scada.MainVision
 
         private void RefreshTick(MySqlCommand cmd)
         {
-            this.dataProvider.RefreshTimeNow(cmd);
+            // 别的地方调用过此方法了
+            // this.dataProvider.RefreshTimeNow(cmd);
             UpdateDataPanel();
         }
 
@@ -102,6 +103,7 @@ namespace Scada.MainVision
             //"瞬时采样流量", "累计采样流量", "累积采样时间"
             // panel.SetData(
 
+            this.DataStatusLabel.Content = GetStatus(d, "status", "");
             this.DataTimeLabel.Content = Get(d, "time", "");
             this.DataFlowLabel.Content = Get(d, "flow", "m³/h");
             this.DataFlowAllLabel.Content = Get(d, "volume", "m³");
@@ -371,6 +373,13 @@ namespace Scada.MainVision
             string v = this.GetDisplayString(d, key.ToLower());
             bool alarm = (v == "1");
             return alarm ? "报警" : "正常";
+        }
+
+        private string GetStatus(Dictionary<string, object> d, string key, string s)
+        {
+            string v = this.GetDisplayString(d, key.ToLower());
+            bool running = (v == "1");
+            return running ? "采样中" : "停止中";
         }
 
         private void MarkAlarm(Dictionary<string, object> d, string key, Label label, int index)

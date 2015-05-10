@@ -158,10 +158,13 @@ namespace Scada.MainVision
 
         // For DevicePage.
         // Get Latest data ( 1 Entry ),
-        public void RefreshTimeNow(MySqlCommand cmd)
+        public void RefreshTimeNow(MySqlCommand cmd, List<string> devices = null)
         {
+            if (devices == null)
+                devices = this.allDeviceKeys;
+
             this.latestData.Clear();
-            foreach (var item in this.allDeviceKeys)
+            foreach (var item in devices)
             {
                 string deviceKey = item.ToLower();
                 // Would use listener to notify, panel would get the lastest data.
