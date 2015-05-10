@@ -28,6 +28,18 @@ namespace Scada.MainVision
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
+            
+            this.BusyCtrl.IsBusy = true;
+            this.BusyCtrl.Text = "";
+
+            var dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+            dispatcherTimer.Tick += (s, evt) =>
+            {
+                this.Close();
+            };
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 10);
+            dispatcherTimer.Start();
+
         }
 
         private void OnClose(object sender, RoutedEventArgs e)
@@ -35,10 +47,6 @@ namespace Scada.MainVision
             this.Close();
         }
 
-        public void SetValue(int value)
-        {
-            this.ProgressBar.Value = value;
-        }
 
         private void WindowMoveHandler(object sender, MouseButtonEventArgs e)
         {

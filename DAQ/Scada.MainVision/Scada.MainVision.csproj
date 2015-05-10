@@ -332,6 +332,10 @@
       <Project>{4a1ace05-95de-477e-a635-b89e57cecf74}</Project>
       <Name>Scada.Config</Name>
     </ProjectReference>
+    <ProjectReference Include="BusyIndicatorCtrl\BusyIndicatorCtrl.csproj">
+      <Project>{aa5978ae-f64d-4288-9e5c-896c959bf3b0}</Project>
+      <Name>BusyIndicatorCtrl</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\LOGO.png" />
@@ -389,6 +393,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\CinderellaBackground50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\loading.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

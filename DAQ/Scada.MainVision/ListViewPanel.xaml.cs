@@ -536,11 +536,6 @@ namespace Scada.Controls
                         this.inSearch = true;
                         if (true || t2 < dt2)
                         {
-                            // Get Daily data;
-                            sc.Post(new SendOrPostCallback((data) =>
-                            {
-                                pw.SetValue(40);
-                            }), null);
                             var searchDataSource = this.dataProvider.RefreshTimeRange(this.deviceKey, dt1, dt2, t1, t2, cmd);
                             
                             this.BeginTime = dt1;
@@ -550,16 +545,17 @@ namespace Scada.Controls
                             {
                                 sc.Send(new SendOrPostCallback((data) =>
                                 {
-                                    pw.SetValue(5);
                                     this.UpdateSearchData((List<Dictionary<string, object>>)data, index, dt1, dt2, days);
-                                    pw.Hide();
+                                    this.searchDataSource = (List<Dictionary<string, object>>)data;
+                                    pw.Close();
                                 }), searchDataSource);
                             }
                             else
                             {
                                 sc.Send(new SendOrPostCallback((data) =>
                                 {
-                                    pw.Hide();
+                                    this.searchDataSource = null;
+                                    pw.Close();
                                 }), null);
                             }
                             
@@ -700,12 +696,12 @@ namespace Scada.Controls
 
         private void ExportDataList(object sender, RoutedEventArgs e)
         {
-            this.ExportDataListToFile(this.dataSource);
+            this.ExportDataListToFile(this.searchDataSource);
         }
 
         private void ExportSearchDataList(object sender, RoutedEventArgs e)
         {
-            this.ExportDataListToFile(this.dataSource);
+            this.ExportDataListToFile(this.searchDataSource);
         }
 
         private void ExportDataListToFile(List<Dictionary<string, object>> dataList)
