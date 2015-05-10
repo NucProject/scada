@@ -242,6 +242,15 @@ namespace Scada.MainSettings
             get;
             set;
         }
+
+        [Category("报警")]
+        [DisplayName("剂量率报警阀值")]
+        [DefaultValue(100.0)]
+        public double AlarmValue
+        {
+            get;
+            set;
+        }
     }
 
     /// <summary>

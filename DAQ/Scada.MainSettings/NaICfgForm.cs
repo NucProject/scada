@@ -28,7 +28,8 @@ namespace Scada.MainSettings
                 {DeviceEntry.IPAddress, this.settings.IPAddress},
                 {DeviceEntry.RecordInterval, this.settings.Frequence.ToString()},
                 {DeviceEntry.DeviceSn, this.settings.DeviceSn},
-                {"factor1", this.settings.Factor.ToString()}
+                {"factor1", this.settings.Factor.ToString()},
+                {DeviceEntry.Alarm1, this.settings.AlarmValue.ToString()},
                 
             });
         }
@@ -57,6 +58,7 @@ namespace Scada.MainSettings
             settings.MinuteAdjust = (StringValue)entry["MinuteAdjust"];
             settings.IPAddress = (StringValue)entry[DeviceEntry.IPAddress];
             settings.Factor = (StringValue)entry["factor1"];
+            settings.AlarmValue = (StringValue)entry[DeviceEntry.Alarm1];
             return settings;
         }
 

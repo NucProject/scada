@@ -517,13 +517,16 @@ namespace Scada.Controls
             var dt1 = DateTime.Parse(this.FromDateText.Text);
             var dt2 = DateTime.Parse(this.ToDateText.Text);
             int days = (dt2 - dt1).Days;
+
+            ProgressWindow pw = new ProgressWindow();
+            pw.Show();
             SynchronizationContext sc = SynchronizationContext.Current;
 
             Thread thread = new Thread(new ParameterizedThreadStart((o) => 
             {
-                
                 using (var conn = DBDataProvider.Instance.GetMySqlConnection())
                 {
+                    // pw.SetValue(20);
                     using (var cmd = conn.CreateCommand())
                     {
                         DateTime t1 = dt1;
@@ -534,8 +537,12 @@ namespace Scada.Controls
                         if (true || t2 < dt2)
                         {
                             // Get Daily data;
+                            sc.Post(new SendOrPostCallback((data) =>
+                            {
+                                pw.SetValue(40);
+                            }), null);
                             var searchDataSource = this.dataProvider.RefreshTimeRange(this.deviceKey, dt1, dt2, t1, t2, cmd);
-
+                            
                             this.BeginTime = dt1;
                             this.EndTime = dt2;
 
@@ -543,11 +550,21 @@ namespace Scada.Controls
                             {
                                 sc.Send(new SendOrPostCallback((data) =>
                                 {
+                                    pw.SetValue(5);
                                     this.UpdateSearchData((List<Dictionary<string, object>>)data, index, dt1, dt2, days);
+                                    pw.Hide();
                                 }), searchDataSource);
                             }
-
+                            else
+                            {
+                                sc.Send(new SendOrPostCallback((data) =>
+                                {
+                                    pw.Hide();
+                                }), null);
+                            }
+                            
                         }
+                        
                         this.inSearch = false;
                     }
                 }
