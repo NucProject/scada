@@ -24,15 +24,23 @@ namespace Scada.Main
 
         private void SettingsForm_Load(object sender, EventArgs e)
         {
+            // 暂时隐藏不需要的设备设置页
+            this.tabControl.Controls.Remove(this.tabPage4);
+            this.tabControl.Controls.Remove(this.tabPage5);
+            this.tabControl.Controls.Remove(this.tabPage6);
+            this.tabControl.Controls.Remove(this.tabPage7);
+            this.tabControl.Controls.Remove(this.tabPage8);
+            this.tabControl.Controls.Remove(this.tabPage9);
+
             this.tabPage1.Controls.Add(new HpicCfgForm());
             this.tabPage2.Controls.Add(new NaICfgForm());
             this.tabPage3.Controls.Add(new WeatherCfgForm());
-            this.tabPage4.Controls.Add(new MdsCfgForm());
-            this.tabPage5.Controls.Add(new IsCfgForm());
-            this.tabPage6.Controls.Add(new EnvCfgForm());
-            this.tabPage7.Controls.Add(new DwdCfgForm());
-            this.tabPage8.Controls.Add(new CinderlCfgForm());
-            this.tabPage9.Controls.Add(new HPGECfgForm());
+            //this.tabPage4.Controls.Add(new MdsCfgForm());
+            //this.tabPage5.Controls.Add(new IsCfgForm());
+            //this.tabPage6.Controls.Add(new EnvCfgForm());
+            //this.tabPage7.Controls.Add(new DwdCfgForm());
+            //this.tabPage8.Controls.Add(new CinderlCfgForm());
+            //this.tabPage9.Controls.Add(new HPGECfgForm());
         }
 
         private void sureButton_Click(object sender, EventArgs e)

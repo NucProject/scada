@@ -36,11 +36,11 @@
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.tabPage9 = new System.Windows.Forms.TabPage();
             this.cancelButton = new System.Windows.Forms.Button();
             this.sureButton = new System.Windows.Forms.Button();
             this.exitButton = new System.Windows.Forms.Button();
-            this.tabPage8 = new System.Windows.Forms.TabPage();
-            this.tabPage9 = new System.Windows.Forms.TabPage();
             this.tabControl.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,7 +68,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 40);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(642, 179);
+            this.tabPage1.Size = new System.Drawing.Size(504, 189);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "高压电离室";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -78,60 +78,80 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 40);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(642, 179);
+            this.tabPage2.Size = new System.Drawing.Size(504, 189);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "碘化钠谱仪";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // tabPage3
             // 
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Location = new System.Drawing.Point(4, 40);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(642, 197);
+            this.tabPage3.Size = new System.Drawing.Size(504, 189);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "气象站";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage4
             // 
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Location = new System.Drawing.Point(4, 40);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(642, 197);
+            this.tabPage4.Size = new System.Drawing.Size(504, 189);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "超大流量气溶胶采样器";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // tabPage5
             // 
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Location = new System.Drawing.Point(4, 40);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(642, 197);
+            this.tabPage5.Size = new System.Drawing.Size(504, 189);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "碘采样器";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // tabPage6
             // 
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Location = new System.Drawing.Point(4, 40);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(642, 197);
+            this.tabPage6.Size = new System.Drawing.Size(504, 189);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "环境与安防监控";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
             // tabPage7
             // 
-            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Location = new System.Drawing.Point(4, 40);
             this.tabPage7.Name = "tabPage7";
             this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(642, 197);
+            this.tabPage7.Size = new System.Drawing.Size(504, 189);
             this.tabPage7.TabIndex = 6;
             this.tabPage7.Text = "干湿沉降采集器";
             this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // tabPage8
+            // 
+            this.tabPage8.Location = new System.Drawing.Point(4, 40);
+            this.tabPage8.Name = "tabPage8";
+            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage8.Size = new System.Drawing.Size(504, 189);
+            this.tabPage8.TabIndex = 7;
+            this.tabPage8.Text = "超大流量特征核素甄别仪";
+            this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // tabPage9
+            // 
+            this.tabPage9.Location = new System.Drawing.Point(4, 40);
+            this.tabPage9.Name = "tabPage9";
+            this.tabPage9.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage9.Size = new System.Drawing.Size(504, 189);
+            this.tabPage9.TabIndex = 8;
+            this.tabPage9.Text = "高纯锗谱仪";
+            this.tabPage9.UseVisualStyleBackColor = true;
             // 
             // cancelButton
             // 
@@ -162,26 +182,6 @@
             this.exitButton.Text = "退出";
             this.exitButton.UseVisualStyleBackColor = true;
             this.exitButton.Click += new System.EventHandler(this.exitButton_Click);
-            // 
-            // tabPage8
-            // 
-            this.tabPage8.Location = new System.Drawing.Point(4, 40);
-            this.tabPage8.Name = "tabPage8";
-            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage8.Size = new System.Drawing.Size(642, 179);
-            this.tabPage8.TabIndex = 7;
-            this.tabPage8.Text = "超大流量特征核素甄别仪";
-            this.tabPage8.UseVisualStyleBackColor = true;
-            // 
-            // tabPage9
-            // 
-            this.tabPage9.Location = new System.Drawing.Point(4, 40);
-            this.tabPage9.Name = "tabPage9";
-            this.tabPage9.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage9.Size = new System.Drawing.Size(504, 189);
-            this.tabPage9.TabIndex = 8;
-            this.tabPage9.Text = "高纯锗谱仪";
-            this.tabPage9.UseVisualStyleBackColor = true;
             // 
             // SettingsForm
             // 
