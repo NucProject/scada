@@ -102,7 +102,7 @@ namespace Scada.MainVision
             //"瞬时采样流量", "累计采样流量", "累积采样时间"
             // panel.SetData(
 
-            this.DataTimeAllLabel.Content = Get(d, "time", "");
+            this.DataTimeLabel.Content = Get(d, "time", "");
             this.DataFlowLabel.Content = Get(d, "flow", "m³/h");
             this.DataFlowAllLabel.Content = Get(d, "volume", "m³");
             this.DataTimeAllLabel.Content = Get(d, "hours", "h");
