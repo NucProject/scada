@@ -4,23 +4,10 @@
     xmlns:sm="clr-namespace:Scada.MainVision"
     xmlns:s="clr-namespace:BusyIndicatorCtrl"
     xmlns:cl="using:Scada.Controls" WindowStyle="None"  AllowsTransparency="True"
-       WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
+    WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
     Height="50" Width="50" BorderBrush="White" BorderThickness="0" 
         Loaded="WindowLoaded" MouseLeftButtonDown="WindowMoveHandler">
-    <!--
-    <Window.Background>
-        <LinearGradientBrush>
-            <LinearGradientBrush.GradientStops>
-                <GradientStop Color="#F9F9F9" Offset="0.0" />
-                <GradientStop Color="#F9F9F9" Offset="1.0" />
-            </LinearGradientBrush.GradientStops>
-        </LinearGradientBrush>
-    </Window.Background>
-    
-    <Window.Effect>
-        <DropShadowEffect Direction="320" ShadowDepth="8" Opacity=".4"></DropShadowEffect>
-    </Window.Effect>
-    -->
+
     <StackPanel Height="50" Width="50" >
         <s:BusyIndicator  x:Name="BusyCtrl" />
     </StackPanel>
