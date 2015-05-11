@@ -2,9 +2,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sm="clr-namespace:Scada.MainVision"
-    xmlns:s="clr-namespace:BusyIndicatorCtrl;assembly=BusyIndicatorCtrl"
+    xmlns:s="clr-namespace:BusyIndicatorCtrl"
     xmlns:cl="using:Scada.Controls" WindowStyle="None"  AllowsTransparency="True"
-       WindowStartupLocation="CenterScreen"
+       WindowStartupLocation="CenterScreen" ShowInTaskbar="False"
     Height="50" Width="50" BorderBrush="White" BorderThickness="0" 
         Loaded="WindowLoaded" MouseLeftButtonDown="WindowMoveHandler">
     <!--

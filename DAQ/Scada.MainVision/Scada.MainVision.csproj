@@ -107,6 +107,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="BusyIndicator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="CinderellaPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -214,6 +218,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BusyIndicator.cs" />
     <Compile Include="CanvasEx.cs" />
     <Compile Include="CinderellaPage.xaml.cs">
       <DependentUpon>CinderellaPage.xaml</DependentUpon>
@@ -331,10 +336,6 @@
     <ProjectReference Include="..\Scada.Config\Scada.Config.csproj">
       <Project>{4a1ace05-95de-477e-a635-b89e57cecf74}</Project>
       <Name>Scada.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="BusyIndicatorCtrl\BusyIndicatorCtrl.csproj">
-      <Project>{aa5978ae-f64d-4288-9e5c-896c959bf3b0}</Project>
-      <Name>BusyIndicatorCtrl</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
