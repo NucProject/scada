@@ -365,10 +365,14 @@ namespace Scada.Data.Client
                         this.lastDeviceSendData[deviceKey] = default(DateTime);
                     }
 
-                    if (sendTime == this.lastDeviceSendData[deviceKey])
+                    if (this.lastDeviceSendData.ContainsKey(deviceKey))
                     {
-                        continue;
+                        if (sendTime == this.lastDeviceSendData[deviceKey])
+                        {
+                            continue;
+                        }
                     }
+   
                 }
 
                 Packet packet = this.GetPacket(sendTime, deviceKey, packetId);

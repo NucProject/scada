@@ -426,7 +426,7 @@ namespace Scada.Declare
             try
             {
                 DateTime d = DateTime.ParseExact(time, "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                return d.ToString();
+                return string.Format("{0:yyyy-MM-dd HH:mm:ss}", d);
             }
             catch(Exception)
             {
