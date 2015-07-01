@@ -374,12 +374,14 @@ namespace Scada.Data.Client
                     }
    
                 }
-
+                
                 Packet packet = this.GetPacket(sendTime, deviceKey, packetId);
                 if (packet != null)
                 {
+                    //MessageBox.Show(packet.ToString());
                     if (this.agent.SendPacket(packet))
                     {
+                        //MessageBox.Show(packet.ToString());
                         // 当发送成功后，才记录已发送的时间
                         this.lastDeviceSendData[deviceKey] = sendTime;
                     }
@@ -451,12 +453,12 @@ namespace Scada.Data.Client
                     }
                     else
                     {
+                        // MessageBox.Show("Size=0");
                         return null;
                     }
                 }
                 else
                 {
-                    // TODO: errorMsg
                     return null;
                 }
             }
@@ -658,6 +660,7 @@ namespace Scada.Data.Client
                 {
                     sendTime = Settings.Instance.GetDebugDataTime(deviceKey);
                 }
+        
                 this.CheckLastSendTime = false;
                 SendDevicePacket(deviceKey, sendTime, debugGuid);
                 this.CheckLastSendTime = true;

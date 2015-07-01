@@ -461,7 +461,7 @@ namespace Scada.Data.Client
             }
             else { }
 
-            return string.Format("{0},{1},{2},{3}", dt, startTime, endTime, mode);
+            return string.Format("{0},{1},{2},{3}", string.Format("{0:yyyy-MM-dd HH:mm:ss}", dt), string.Format("{0:yyyy-MM-dd HH:mm:ss}", startTime), string.Format("{0:yyyy-MM-dd HH:mm:ss}", endTime), mode);
         }
 
         private void RemovePrefix(string p)

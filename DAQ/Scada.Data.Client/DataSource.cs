@@ -11,6 +11,7 @@ namespace Scada.Data.Client
     using System.Threading;
     using Scada.Config;
     using System.Data.SqlClient;
+    using System.Windows.Forms;
 
     public enum ReadResult
     {
@@ -88,7 +89,7 @@ namespace Scada.Data.Client
         {
             // Get the recent <count> entries.
             string format = "select * from {0} where time='{1}'";
-            return string.Format(format, tableName, time.ToString());
+            return string.Format(format, tableName, string.Format("{0:yyyy-MM-dd HH:mm:ss}", time));
         }
 
         private static string GetSelectStatement(string tableName, DateTime fromTime, DateTime toTime, RangeType rangeType)
@@ -103,7 +104,7 @@ namespace Scada.Data.Client
             {
                 format = "select * from {0} where time>='{1}' and time<'{2}'";
             }
-            string sql = string.Format(format, tableName, fromTime, toTime);
+            string sql = string.Format(format, tableName, string.Format("{0:yyyy-MM-dd HH:mm:ss}", fromTime), string.Format("{0:yyyy-MM-dd HH:mm:ss}", toTime));
             return sql;
         }
 
@@ -152,6 +153,7 @@ namespace Scada.Data.Client
                             catch (Exception e)
                             {
                                 errorMsg = e.Message;
+                                // MessageBox.Show(errorMsg);
                                 return ReadResult.FieldNotFound;
                             }
                         }
@@ -170,21 +172,26 @@ namespace Scada.Data.Client
             catch (IOException e)
             {
                 errorMsg = e.Message;
+                //MessageBox.Show(errorMsg);
                 return ReadResult.ReadDataIOError;
+               
             }
             catch (SqlException e)
             {
                 errorMsg = e.Message;
+                //MessageBox.Show(errorMsg);
                 return ReadResult.ReadDataSqlError;
             }
             catch (InvalidOperationException e)
             {
                 errorMsg = e.Message;
+                //MessageBox.Show(errorMsg);
                 return ReadResult.ReadDataInvalidOperation;
             }
             catch (Exception e)
             {
                 errorMsg = e.Message;
+                //MessageBox.Show(errorMsg);
                 return ReadResult.UnknownReadDataError;
             }
         }
