@@ -16,6 +16,7 @@ using System.Windows.Forms;
 
 namespace Scada.Data.Client
 {
+    // https://github.com/healerkx/scada.git
     public partial class MainDataAgentWindow : Form
     {
         public class DeviceDataDetails
@@ -736,7 +737,10 @@ namespace Scada.Data.Client
             }
             else if (ne == NotifyEvents.HistoryData)
             {
-                this.HandleHistoryData(p.Payload);
+                if (p != null)
+                {
+                    this.HandleHistoryData(p.Payload);
+                }
             }
         }
 
@@ -801,6 +805,8 @@ namespace Scada.Data.Client
             else
             {
                 string timesStr = GetValue(payload, "times");
+                if (timesStr == null)
+                    return;
                 string[] timesArray = timesStr.Split(',');
                 Dictionary<long, bool> dict = new Dictionary<long, bool>();
                 foreach (var time in timesArray)
@@ -832,7 +838,6 @@ namespace Scada.Data.Client
                             List<Dictionary<string, object>> group = new List<Dictionary<string, object>>();
                             for (var i = 0; i < len; i++)
                             {
-                                // !
                                 var item = data[i];
                                 long unixtime = Packet.GetUnixTime2((string)item["time"]);
                                 if (dict.ContainsKey(unixtime))
@@ -843,11 +848,14 @@ namespace Scada.Data.Client
                                 if (group.Count >= 20 || i + 1 == len)
                                 {
                                     Packet p = builder.GetPacket(deviceKey, group, true);
-                                    p.DeviceKey = deviceKey;
-                                    p.Id = "";
-                                    p.setHistory();
+                                    if (p != null)
+                                    {
+                                        p.DeviceKey = deviceKey;
+                                        p.Id = "";
+                                        p.setHistory();
 
-                                    this.agent.SendPacket(p);
+                                        this.agent.SendPacket(p);
+                                    }
 
                                     group.Clear();
                                 }
