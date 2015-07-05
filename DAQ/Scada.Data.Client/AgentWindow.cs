@@ -364,8 +364,7 @@ namespace Scada.Data.Client
                     {
                         this.lastDeviceSendData[deviceKey] = default(DateTime);
                     }
-
-                    if (this.lastDeviceSendData.ContainsKey(deviceKey))
+                    else
                     {
                         if (sendTime == this.lastDeviceSendData[deviceKey])
                         {
@@ -690,6 +689,18 @@ namespace Scada.Data.Client
             });
         }
 
+        private static DateTime BaseTime = new DateTime(1970, 1, 1);
+
+        /// <summary>   
+        /// 将unixtime转换为.NET的DateTime   
+        /// </summary>   
+        /// <param name="timeStamp">秒数</param>   
+        /// <returns>转换后的时间</returns>   
+        public static DateTime FromUnixTime(long timeStamp)
+        {
+            return new DateTime((timeStamp + 8 * 60 * 60) * 10000000 + BaseTime.Ticks);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -759,6 +770,33 @@ namespace Scada.Data.Client
                 }));
                 thread.Start();
 
+            }
+            else if (device == "labr")
+            {
+                Thread thread = new Thread(new ParameterizedThreadStart((o) =>
+                {
+                    string timesStr = GetValue(payload, "times");
+                    string[] timesArray = timesStr.Split(',');
+
+                    foreach (var i in timesArray)
+                    {
+                        DateTime time = FromUnixTime(long.Parse(i));
+                        string filePath = DataSource.Instance.GetLabrDeviceFile(time);
+                        if (string.IsNullOrEmpty(filePath))
+                            continue;
+
+                        Packet p = builder.GetFilePacket(filePath, "labr");
+                        if (p != null)
+                        {
+                            p.DeviceKey = Devices.Labr;
+                            p.Id = "";
+                            p.setHistory();
+
+                            this.agent.SendPacket(p);
+                        }
+                    }
+                }));
+                thread.Start();
             }
             else
             {
