@@ -216,7 +216,7 @@ namespace Scada.Data.Client
                     }
                     else if (code.DataType == "bit")
                     {
-                        json[kv.Key] = (kv.Value == "1");
+                        json[kv.Key] = ((string)kv.Value == "1");
                     }
                 }
             }

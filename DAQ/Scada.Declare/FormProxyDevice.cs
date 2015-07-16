@@ -78,7 +78,7 @@ namespace Scada.Declare
 
 		public FormProxyDevice(DeviceEntry entry)
 		{
-
+            // 这个设备现在可以被deprecated了
 			this.Initialize(entry);
 		}
 

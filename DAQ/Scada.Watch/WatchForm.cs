@@ -239,10 +239,11 @@ namespace Scada.Watch
                     processInfo.Arguments = arg;
                 }
                 Process.Start(processInfo);
-                this.FilePutContents(fileName);
+                this.FilePutContents(name + "open!");
             }
             catch (Exception)
             {
+                this.FilePutContents(name + "open failed");
             }
         }
 

@@ -13,7 +13,7 @@ namespace Scada.Common
     {
         private Socket WinSocket = null;
 
-        private Action<string> callbackAction;
+        // private Action<string> callbackAction;
 
         private Thread commandThread;
 
@@ -31,8 +31,9 @@ namespace Scada.Common
 
         public void Close()
         {
-            Command.Send(this.port, "<QUIT>");
+            Command.Send(this.port, Quit);
             this.WinSocket.Close();
+            this.WinSocket = null;
             this.commandThread.Abort();
         }
 
@@ -48,18 +49,27 @@ namespace Scada.Common
                         EndPoint Remote = (EndPoint)(sender);
 
                         byte[] buffer = new byte[1024];
-                        
-                        int size = this.WinSocket.ReceiveFrom(buffer, ref Remote);
-                        if (size > 0)
+
+                        try
                         {
-                            string msg = Encoding.UTF8.GetString(buffer, 0, size);
-                            if (msg == Quit)
+                            int size = this.WinSocket.ReceiveFrom(buffer, ref Remote);
+                            if (size > 0)
+                            {
+                                string msg = Encoding.UTF8.GetString(buffer, 0, size);
+                                if (msg == Quit)
+                                {
+                                    break;
+                                }
+                                callbackAction(msg);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            if (this.WinSocket == null)
                             {
                                 break;
                             }
-                            callbackAction(msg);
                         }
-                        
                     }
                 }
                 catch (Exception)

@@ -191,7 +191,11 @@ namespace Scada.Data.Client
                 }
                 catch (Exception) { }
             }
-            this.cmdReceiver.Close();
+
+            if (this.cmdReceiver != null)
+            {
+                this.cmdReceiver.Close();
+            }
             Application.Exit();
         }
 
