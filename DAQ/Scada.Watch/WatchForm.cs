@@ -29,6 +29,8 @@ namespace Scada.Watch
 
         private FileSystemWatcher fsw = null;
 
+        private StreamWriter sw = null;
+
 		public WatchForm()
 		{
 			InitializeComponent();
@@ -77,6 +79,8 @@ namespace Scada.Watch
             this.textPath.Enabled = false;
             this.buttonWatch.Enabled = false;
 
+            this.sw = new StreamWriter("watch.txt", true);
+            this.FilePutContents("Open");
             SystemEvents.SessionEnding += SystemEvents_SessionEnding;
 		}
 
@@ -162,6 +166,7 @@ namespace Scada.Watch
                 // 自动重启数采和数据上传
                 if (this.CheckRebootDate(DateTime.Now))
                 {
+                    FilePutContents("Reboot");
                     this.Reboot(DateTime.Now);
                 }
             }
@@ -234,6 +239,7 @@ namespace Scada.Watch
                     processInfo.Arguments = arg;
                 }
                 Process.Start(processInfo);
+                this.FilePutContents(fileName);
             }
             catch (Exception)
             {
@@ -283,6 +289,8 @@ namespace Scada.Watch
             {
                 e.Cancel = true;
             }
+            this.FilePutContents("Close by user");
+            this.sw.Close();
         }
 
         private void WatchForm_SizeChanged(object sender, EventArgs e)
@@ -291,6 +299,13 @@ namespace Scada.Watch
             {
                 this.Visible = false;
             }
+        }
+
+        private void FilePutContents(string content)
+        {
+            string line = string.Format("[{0:yyyy-MM-dd HH:mm:ss}] {1}", DateTime.Now, content);
+            this.sw.WriteLine(line);
+            this.sw.Flush();
         }
 
         private void toolStripSplitButton1_ButtonClick(object sender, EventArgs e)
