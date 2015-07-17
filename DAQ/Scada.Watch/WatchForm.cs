@@ -187,7 +187,7 @@ namespace Scada.Watch
                 {
                     "Scada.Main.exe", scadaDataClient + ".exe"
                 });
-
+            Thread.Sleep(5000);
             this.WatchProcess("Scada.Main", "/R");
             this.WatchProcess(scadaDataClient, "--start");
             this.lastCheckRebootTime = dateTime;
@@ -195,9 +195,9 @@ namespace Scada.Watch
 
         private bool CheckRebootDate(DateTime dateTime)
         {
-            if (this.lastCheckRebootTime.Month != dateTime.Month)
+            if (this.lastCheckRebootTime.Day != dateTime.Day)
             {
-                if (dateTime.Day == 1)
+                if (dateTime.Day == 1 || dateTime.Day == 15)
                 {
                     if (dateTime.Hour == 23)
                     {

@@ -104,6 +104,8 @@ namespace Scada.Declare
 
                 // 上传状态到mv客户端
                 Command.Send(Ports.MainVision, new Command("m", "mv", "cinderella.status", c));
+
+                // Log
                 RecordManager.DoSystemEventRecord(this, c);
 
                 // Log
