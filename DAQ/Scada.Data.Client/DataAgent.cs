@@ -508,6 +508,7 @@ namespace Scada.Data.Client
         {
             Thread thread = new Thread(new ParameterizedThreadStart((o) => 
             {
+                
                 foreach (var deviceKey in Settings.Instance.DeviceKeys)
                 {
                     string deviceType = Packet.GetDataCenterDeviceId(deviceKey);

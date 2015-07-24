@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using Scada.Common;
+using Scada.Config;
 using Scada.Data.Client;
 using Scada.Data.Client.Properties;
 using System;
@@ -120,6 +121,9 @@ namespace Scada.Data.Client
                 this.cmdReceiver = new CommandReceiver(Ports.DataClient);
                 cmdReceiver.Start(this.OnLocalCommand);
             }
+
+            // Test OK
+            // string[] deviceKeys = AllDevices.GetIdArray();
             this.InitDetailsListView();
             this.Start();
         }
@@ -788,19 +792,23 @@ namespace Scada.Data.Client
 
                     foreach (var i in timesArray)
                     {
-                        DateTime time = FromUnixTime(long.Parse(i));
-                        string filePath = DataSource.Instance.GetLabrDeviceFile(time);
-                        if (string.IsNullOrEmpty(filePath))
-                            continue;
-
-                        Packet p = builder.GetFilePacket(filePath, "labr");
-                        if (p != null)
+                        long ts;
+                        if (long.TryParse(i, out ts))
                         {
-                            p.DeviceKey = Devices.Labr;
-                            p.Id = "";
-                            p.setHistory();
+                            DateTime time = FromUnixTime(ts);
+                            string filePath = DataSource.Instance.GetLabrDeviceFile(time);
+                            if (string.IsNullOrEmpty(filePath))
+                                continue;
 
-                            this.agent.SendPacket(p);
+                            Packet p = builder.GetFilePacket(filePath, "labr");
+                            if (p != null)
+                            {
+                                p.DeviceKey = Devices.Labr;
+                                p.Id = "";
+                                p.setHistory();
+
+                                this.agent.SendPacket(p);
+                            }
                         }
                     }
                 }));
@@ -815,7 +823,11 @@ namespace Scada.Data.Client
                 Dictionary<long, bool> dict = new Dictionary<long, bool>();
                 foreach (var time in timesArray)
                 {
-                    dict.Add(long.Parse(time), true);
+                    long t;
+                    if (long.TryParse(time, out t))
+                    {
+                        dict.Add(t, true);
+                    }
                 }
 
                 if (timesArray != null && timesArray.Length > 0)

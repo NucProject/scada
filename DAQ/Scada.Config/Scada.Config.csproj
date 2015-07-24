@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AllDevices.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="ConfigPath.cs" />
     <Compile Include="DBConnString.cs" />

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Scada.Data.Client
 {
+    /// <summary>
+    /// Deprecated
+    /// </summary>
     class Devices
     {
         public const string Prefix = "scada.";
