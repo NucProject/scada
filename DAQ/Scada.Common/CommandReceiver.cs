@@ -124,13 +124,20 @@ namespace Scada.Common
 
         public static int Send(int port, string msg)
         {
-            IPEndPoint RemoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
-            UdpClient client = new UdpClient();
+            try
+            {
+                IPEndPoint RemoteEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
+                UdpClient client = new UdpClient();
 
-            var data = Encoding.UTF8.GetBytes(msg);
-            int r = client.Send(data, data.Length, RemoteEndPoint);
-            client.Close();
-            return r;
+                var data = Encoding.UTF8.GetBytes(msg);
+                int r = client.Send(data, data.Length, RemoteEndPoint);
+                client.Close();
+                return r;
+            }
+            catch (Exception e)
+            {
+                return -1;
+            }
         }
 
         public static int Send(int port, Command cmd)
