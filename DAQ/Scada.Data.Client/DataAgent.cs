@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Scada.Data.Client
 {
@@ -366,6 +367,23 @@ namespace Scada.Data.Client
             return string.Empty;
         }
 
+        private string ExtractDate(string date)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char i in date.Trim())
+            {
+                if (i >= '0' && i <= '9')
+                {
+                    sb.Append(i);
+                }
+                else if (i == '/' || i == '-' || i == ' ' || i == ':')
+                {
+                    sb.Append(i);
+                }
+            }
+            return sb.ToString();
+        }
+
         // 处理HPGe文件参数
         private string GetHpGeParams(string fileName)
         {
@@ -443,7 +461,8 @@ namespace Scada.Data.Client
                     if (index1 >= 0)
                     {
                         string tmpDate = line.Substring(index1 + 12);
-                        tmpDate = tmpDate.Replace('\0', ' ').Trim();
+                        tmpDate = ExtractDate(tmpDate);//.Replace('\0', ' ').Trim();
+                        // MessageBox.Show(tmpDate);
 
                         startTime = DateTime.Parse(tmpDate);
                         continue;

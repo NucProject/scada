@@ -725,6 +725,8 @@ namespace Scada.Data.Client
             }
             else if (ne == NotifyEvents.UploadFileFailed)
             {
+                this.debugConsole.Text += string.Format("{0}\n", p.Message);
+                // MessageBox
                 fileUploadInfoListBox.Items.Add(msg);
             }
             else if (ne == NotifyEvents.DebugMessage)
