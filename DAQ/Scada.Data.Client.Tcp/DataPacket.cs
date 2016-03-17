@@ -11,6 +11,8 @@ namespace Scada.Data.Client.Tcp
 
         private string deviceKey;
 
+        private static int i = 0;
+
         public string DeviceKey
         {
             get { return this.deviceKey; }
@@ -219,7 +221,15 @@ namespace Scada.Data.Client.Tcp
             if (!string.IsNullOrEmpty(this.QN))
                 return;
             DateTime n = this.Settings.CurrentTime;
-            string value = string.Format("{0}{1:d2}{2:d2}{3:d2}{4:d2}{5:d2}{6:d3}", n.Year, n.Month, n.Day, n.Hour, n.Minute, n.Second, n.Millisecond);
+
+            Random rand = new Random();
+            int randNum = rand.Next(10, 99);
+            string value = string.Format("{0}{1:d2}{2:d2}{3:d2}{4:d2}{5:d2}{6:d2}{7:d1}", n.Year, n.Month, n.Day, n.Hour, n.Minute, n.Second, randNum, i);
+            i++;
+            if (i >= 10)
+            {
+                i = 0;
+            }
             this.QN = value;
         }
 

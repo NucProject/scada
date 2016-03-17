@@ -242,7 +242,7 @@ namespace Scada.Data.Client
             }
             catch (Exception e)
             {
-                this.NotifyEvent(this, NotifyEvents.SendDataFailed, new Notify() { DeviceKey = packet.DeviceKey, Message = e.Message });
+                this.NotifyEvent(this, NotifyEvents.DebugMessage, new Notify() { DeviceKey = packet.DeviceKey, Message = e.Message });
                 this.HandleWebException(e);
                 return false;
             }

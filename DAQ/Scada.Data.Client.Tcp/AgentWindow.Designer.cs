@@ -181,6 +181,7 @@
             this.mainListBox.Name = "mainListBox";
             this.mainListBox.Size = new System.Drawing.Size(506, 319);
             this.mainListBox.TabIndex = 0;
+            this.mainListBox.SelectedIndexChanged += new System.EventHandler(this.mainListBox_SelectedIndexChanged);
             // 
             // historyPage
             // 
@@ -310,15 +311,17 @@
             // StartToolStripMenuItem
             // 
             this.StartToolStripMenuItem.Name = "StartToolStripMenuItem";
-            this.StartToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.StartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.StartToolStripMenuItem.Text = "启动";
             this.StartToolStripMenuItem.Click += new System.EventHandler(this.StartToolStripMenuItem_Click);
             // 
             // setTimeToolStripMenuItem1
             // 
+            this.setTimeToolStripMenuItem1.Checked = true;
             this.setTimeToolStripMenuItem1.CheckOnClick = true;
+            this.setTimeToolStripMenuItem1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.setTimeToolStripMenuItem1.Name = "setTimeToolStripMenuItem1";
-            this.setTimeToolStripMenuItem1.Size = new System.Drawing.Size(124, 22);
+            this.setTimeToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.setTimeToolStripMenuItem1.Text = "处理校时";
             this.setTimeToolStripMenuItem1.Click += new System.EventHandler(this.SetTimeToolStripMenuItemClick);
             // 
@@ -326,19 +329,19 @@
             // 
             this.SetExceptionToolStripMenuItem.CheckOnClick = true;
             this.SetExceptionToolStripMenuItem.Name = "SetExceptionToolStripMenuItem";
-            this.SetExceptionToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.SetExceptionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.SetExceptionToolStripMenuItem.Text = "异常模拟";
             this.SetExceptionToolStripMenuItem.Click += new System.EventHandler(this.SetExceptionToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(121, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
             // 
             // QuitToolStripMenuItem
             // 
             this.QuitToolStripMenuItem.Name = "QuitToolStripMenuItem";
-            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.QuitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.QuitToolStripMenuItem.Text = "退出";
             this.QuitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolStripMenuItem_Click);
             // 

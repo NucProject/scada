@@ -958,5 +958,10 @@ namespace Scada.Data.Client.Tcp
         {
 
         }
+
+        private void mainListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
