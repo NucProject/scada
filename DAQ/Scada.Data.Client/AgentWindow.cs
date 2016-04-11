@@ -364,6 +364,12 @@ namespace Scada.Data.Client
             List<Packet> packets = new List<Packet>();
             foreach (var deviceKey in deviceKeys)
             {
+
+                if (string.IsNullOrEmpty(Settings.Instance.GetEquipNumber(deviceKey)))
+                {
+                    continue;
+                }
+
                 // 归一化时间
                 DateTime sendTime = GetDeviceSendTime(now, deviceKey);
 
