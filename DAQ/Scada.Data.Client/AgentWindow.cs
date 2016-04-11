@@ -392,7 +392,7 @@ namespace Scada.Data.Client
                 Packet packet = this.GetPacket(sendTime, deviceKey, packetId);
                 if (packet != null)
                 {
-                    //MessageBox.Show(packet.ToString());
+                    // MessageBox.Show(packet.ToString());
                     if (this.agent.SendPacket(packet))
                     {
                         //MessageBox.Show(packet.ToString());

@@ -5,10 +5,10 @@
     <!--
     <datacenter2 BaseUrl="http://211.103.184.100:8080/" />
     -->
-    <datacenter2 BaseUrl="http://219.237.221.41:8080/" />
+    <datacenter2 BaseUrl="http://127.0.0.1:8080/" />
   </datacenters>
   <!-- NOTICE SNO debug-data-time="2013-11-30 20:33:00"-->
-  <site sysname="" sysst="213213123213123213" adapter="" name="" station="128" sno="0313A08" mn="0313A080000000">
+  <site sysname="" sysst="213213123213123213" adapter="" name="" station="129" sno="0313A08" mn="0313A080000000">
   </site>
 
 
@@ -24,15 +24,13 @@
   <devices use-debug-data-time="true">
     <!-- NOTICE -->
     <!-- NOTICE -->
-    <device id="scada.hpic" table="HPIC_rec" eno="001001" debug-data-time="2014-05-05 17:04:30">
+    <device id="scada.new131" table="new131_rec" eno="001001" debug-data-time="2014-05-05 17:04:30">
       <code field="doserate">0102060301</code>
-      <code field="battery">0102069901</code>
       <code field="highvoltage">0102069902</code>
       <code field="temperature">0102069903</code>
     </device>
 
-    <!-- NOTICE -->
-    <!-- NOTICE -->
+    <!--
     <device id="scada.weather" table="weather_rec" eno="002000" debug-data-time="2014-04-24 23:12:30">
       <code field="Temperature">0901040101</code>
       <code field="Humidity">0901040102</code>
@@ -43,14 +41,11 @@
       <code field="IfRain">0901040107</code>
     </device>
 
-    <!-- NOTICE -->
-    <!-- File Time -->
-    <!-- NOTICE -->
+
     <device id="Scada.LabrDevice" table="Labr_Rec" eno="010002" debug-data-time="2014-07-24 23:00:00">
       <code field="file-content">0102060332</code>
     </device>
-    <!-- NOTICE -->
-    <!-- NOTICE -->
+
     <device id="Scada.Shelter" table="environment_rec" eno="999000" debug-data-time="2014-07-20 13:44:30">
       <code field="IfMainPowerOff" type="bit">0102069909</code>
       <code field="BatteryHours">0102069910</code>
@@ -61,8 +56,7 @@
       <code field="IfWater" type="bit">0102069913</code>
     </device>
 
-    <!-- NOTICE -->
-    <!-- NOTICE -->
+
     <device id="Scada.Cinderella.Data" table="CinderellaData_Rec" 
       eno="Scada.Cinderella.Data" debug-data-time="2014-07-16 16:38:30">
       <code field="DeviceTime" type="str">01</code>
@@ -77,21 +71,19 @@
       <code field="Temperature">0A</code>
     </device>
 
-    <!-- NOTICE -->
-    <!-- NOTICE -->
+
     <device id="Scada.Cinderella.Status" table="CinderellaStatus_Rec" 
       eno="Scada.Cinderella.Data" debug-data-time="2014-04-27 10:18:33">
       <code field="StateBits" type="str">01</code>
     </device>
 
-    <!-- NOTICE -->
+
     <device id="Scada.Hpge" table="Hpge_Rec" eno="Scada.Hpge" filepath="">
       <code field="file-content">01</code>
       <code field="file-content">02</code>
     </device>
 
-    <!-- NOTICE -->
-    <!-- NOTICE -->
+
     <device id="Scada.labrfilter" table="labrfilter_rec" eno="002002" debug-data-time="2014-09-29 12:00:30">
       <code field="starttime" type="str">00200201</code>
       <code field="endtime" type="str">00200202</code>
@@ -105,8 +97,7 @@
       <code field="k0">00200210</code> 
     </device>
 
-    <!-- NOTICE -->
-    <!-- NOTICE -->
+
     <device id="Scada.labrnuclidefilter" table="labrnuclidefilter_rec" eno="002003" debug-data-time="2014-09-29 12:00:30">
       <code field="time" type="str">00200301</code>
       <code field="name" type="str">00200302</code>
@@ -114,6 +105,6 @@
       <code field="channel">00200304</code>
       <code field="energy">00200305</code>
     </device>
-
+    -->
   </devices>
 </settings>
