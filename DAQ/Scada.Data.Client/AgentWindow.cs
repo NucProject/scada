@@ -906,6 +906,10 @@ namespace Scada.Data.Client
             {
                 return Devices.Hpic;
             }
+            if (device == "new131")
+            {
+                return Devices.NEW131;
+            }
             else if (device == "weather")
             {
                 return Devices.Weather;

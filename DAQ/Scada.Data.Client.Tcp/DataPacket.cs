@@ -222,10 +222,9 @@ namespace Scada.Data.Client.Tcp
                 return;
             DateTime n = this.Settings.CurrentTime;
 
-            Random rand = new Random();
+            Random rand = new Random(unchecked((int)DateTime.Now.Ticks));
             int randNum = rand.Next(10, 99);
-            string value = string.Format("{0}{1:d2}{2:d2}{3:d2}{4:d2}{5:d2}{6:d2}{7:d1}", n.Year, n.Month, n.Day, n.Hour, n.Minute, n.Second, randNum, i);
-            i++;
+            string value = string.Format("{0}{1:d2}{2:d2}{3:d2}{4:d2}{5:d2}{6:d2}{7:d1}", n.Year, n.Month, n.Day, n.Hour, n.Minute, n.Second, randNum, ++i);
             if (i >= 10)
             {
                 i = 0;

@@ -14,6 +14,8 @@ namespace Scada.Data.Client
 
         public const string Hpic = Prefix + "hpic";
 
+        public const string NEW131 = Prefix + "new131";
+
         public const string Weather = Prefix + "weather";
 
         public const string Labr = Prefix + "labrdevice";

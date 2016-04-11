@@ -369,6 +369,11 @@ namespace Scada.Data.Client.Tcp
 
             foreach (var deviceKey in Settings.Instance.DeviceKeys)
             {
+                if (string.IsNullOrEmpty(Settings.Instance.GetEquipNumber(deviceKey)))
+                {
+                    continue;
+                }
+
                 if (IsDeviceSendTimeOK(now, deviceKey))
                 {
                     DateTime sendTime = GetDeviceSendTime(now, deviceKey);

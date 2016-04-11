@@ -160,7 +160,7 @@ namespace Scada.Data.Client
         // in fact the model class name in Server side.
         public static string GetDataCenterDeviceId(string deviceKey)
         {
-            if (deviceKey == Devices.Hpic)
+            if (deviceKey == Devices.Hpic || deviceKey == Devices.NEW131)
                 return "hpic";
             else if (deviceKey == Devices.Shelter)
                 return "environment";

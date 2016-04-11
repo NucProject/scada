@@ -70,6 +70,7 @@
             this.autoDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FetchCmdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkTodayDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.New131ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -283,7 +284,7 @@
             this.toolStripDropDownButton1});
             this.mainToolStrip.Location = new System.Drawing.Point(3, 0);
             this.mainToolStrip.Name = "mainToolStrip";
-            this.mainToolStrip.Size = new System.Drawing.Size(327, 25);
+            this.mainToolStrip.Size = new System.Drawing.Size(358, 25);
             this.mainToolStrip.TabIndex = 0;
             // 
             // toolStripLabel1
@@ -324,7 +325,8 @@
             this.SendCinderellaDataToolStripMenuItem,
             this.SendCinderellaStatusModuleToolStripMenuItem,
             this.SendShelterToolStripMenuItem,
-            this.SendSycnToolStripMenuItem});
+            this.SendSycnToolStripMenuItem,
+            this.New131ToolStripMenuItem});
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -334,7 +336,7 @@
             // SendHpicToolStripMenuItem
             // 
             this.SendHpicToolStripMenuItem.Name = "SendHpicToolStripMenuItem";
-            this.SendHpicToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendHpicToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.SendHpicToolStripMenuItem.Tag = "scada.hpic";
             this.SendHpicToolStripMenuItem.Text = "高压电离室";
             this.SendHpicToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
@@ -342,7 +344,7 @@
             // SendWeatherToolStripMenuItem
             // 
             this.SendWeatherToolStripMenuItem.Name = "SendWeatherToolStripMenuItem";
-            this.SendWeatherToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendWeatherToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.SendWeatherToolStripMenuItem.Tag = "scada.weather";
             this.SendWeatherToolStripMenuItem.Text = "气象站";
             this.SendWeatherToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
@@ -350,7 +352,7 @@
             // SendLabrToolStripMenuItem
             // 
             this.SendLabrToolStripMenuItem.Name = "SendLabrToolStripMenuItem";
-            this.SendLabrToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendLabrToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.SendLabrToolStripMenuItem.Tag = "scada.labrdevice";
             this.SendLabrToolStripMenuItem.Text = "Labr谱仪";
             this.SendLabrToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
@@ -358,7 +360,7 @@
             // SendHPGeToolStripMenuItem
             // 
             this.SendHPGeToolStripMenuItem.Name = "SendHPGeToolStripMenuItem";
-            this.SendHPGeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendHPGeToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.SendHPGeToolStripMenuItem.Tag = "scada.hpge";
             this.SendHPGeToolStripMenuItem.Text = "高纯锗";
             this.SendHPGeToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
@@ -366,7 +368,7 @@
             // SendCinderellaDataToolStripMenuItem
             // 
             this.SendCinderellaDataToolStripMenuItem.Name = "SendCinderellaDataToolStripMenuItem";
-            this.SendCinderellaDataToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendCinderellaDataToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.SendCinderellaDataToolStripMenuItem.Tag = "scada.cinderella.data";
             this.SendCinderellaDataToolStripMenuItem.Text = "Cinderella数据";
             this.SendCinderellaDataToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
@@ -374,7 +376,7 @@
             // SendCinderellaStatusModuleToolStripMenuItem
             // 
             this.SendCinderellaStatusModuleToolStripMenuItem.Name = "SendCinderellaStatusModuleToolStripMenuItem";
-            this.SendCinderellaStatusModuleToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendCinderellaStatusModuleToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.SendCinderellaStatusModuleToolStripMenuItem.Tag = "scada.cinderella.status";
             this.SendCinderellaStatusModuleToolStripMenuItem.Text = "Cinderella状态";
             this.SendCinderellaStatusModuleToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
@@ -382,7 +384,7 @@
             // SendShelterToolStripMenuItem
             // 
             this.SendShelterToolStripMenuItem.Name = "SendShelterToolStripMenuItem";
-            this.SendShelterToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendShelterToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.SendShelterToolStripMenuItem.Tag = "scada.shelter";
             this.SendShelterToolStripMenuItem.Text = "环境与安防监控";
             this.SendShelterToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
@@ -390,7 +392,7 @@
             // SendSycnToolStripMenuItem
             // 
             this.SendSycnToolStripMenuItem.Name = "SendSycnToolStripMenuItem";
-            this.SendSycnToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.SendSycnToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.SendSycnToolStripMenuItem.Text = "进程同步测试";
             this.SendSycnToolStripMenuItem.Click += new System.EventHandler(this.SendSycnToolStripMenuItem_Click);
             // 
@@ -457,6 +459,14 @@
             this.checkTodayDataToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.checkTodayDataToolStripMenuItem.Text = "申请当日数据复查";
             this.checkTodayDataToolStripMenuItem.Click += new System.EventHandler(this.checkTodayDataToolStripMenuItem_Click);
+            // 
+            // New131ToolStripMenuItem
+            // 
+            this.New131ToolStripMenuItem.Name = "New131ToolStripMenuItem";
+            this.New131ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.New131ToolStripMenuItem.Tag = "scada.new131";
+            this.New131ToolStripMenuItem.Text = "高压电离室(New131)";
+            this.New131ToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
             // 
             // MainDataAgentWindow
             // 
@@ -537,7 +547,7 @@
         private System.Windows.Forms.ToolStripButton StartUpdateStripButton;
         private System.Windows.Forms.ToolStripMenuItem SendSycnToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkTodayDataToolStripMenuItem;
-
+        private System.Windows.Forms.ToolStripMenuItem New131ToolStripMenuItem;
     }
 }
 

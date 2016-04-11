@@ -21,7 +21,8 @@ namespace Scada.Data.Client
         public static string AgentXml = "agent.http.settings";
 
         public string[] DeviceKeys = {
-                                Devices.Hpic, 
+                                Devices.Hpic,
+                                Devices.NEW131,
                                 Devices.Weather, 
                                 Devices.CinderellaData,
                                 Devices.CinderellaStatus,
@@ -33,7 +34,8 @@ namespace Scada.Data.Client
                                      };
 
         public string[] DataDeviceKeys = {
-                                Devices.Hpic, 
+                                Devices.Hpic,
+                                Devices.NEW131,
                                 Devices.Weather, 
                                 Devices.CinderellaData,
                                 Devices.CinderellaStatus,

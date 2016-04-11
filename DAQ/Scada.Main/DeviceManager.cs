@@ -309,8 +309,20 @@ namespace Scada.Main
             {
                 return new WeatherDevice_Zhongming(entry);
             }
+            else if (typeof(Bai9850Device).ToString() == className)
+            {
+                return new Bai9850Device(entry);
+            }
+            else if (typeof(Bai9125Device).ToString() == className)
+            {
+                return new Bai9125Device(entry);
+            }
+            else if (typeof(NEW131).ToString() == className)
+            {
+                return new NEW131(entry);
+            }
 
-			// Other Device defined in some Assemblies.
+            // Other Device defined in some Assemblies.
             if (entry[DeviceEntry.Assembly] != null)
             {
                 string assemblyName = (StringValue)entry[DeviceEntry.Assembly];

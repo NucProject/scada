@@ -99,6 +99,7 @@
     <Compile Include="Declare.cs" />
     <Compile Include="LogEvent.cs" />
     <Compile Include="MDSDevice.cs" />
+    <Compile Include="NEW131.cs" />
     <Compile Include="NuclideData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RadeyeDevice.cs" />
