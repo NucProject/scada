@@ -331,7 +331,7 @@ namespace Scada.Declare
             }
 
             DeviceData dd;
-            if (!this.GetDeviceData(line, this.currentRecordTime, out dd))
+            if (!this.GetDeviceData(line, rightTime, out dd))
             {
                 dd = new DeviceData(this, null);
                 dd.OriginData = DeviceData.ErrorFlag;
