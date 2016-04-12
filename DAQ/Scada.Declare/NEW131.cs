@@ -360,23 +360,25 @@ namespace Scada.Declare
 
             string[] data = new string[3];
 
-            string strData = System.Text.Encoding.Default.GetString(line);
-            if (strData.Contains("Data display terminated") == true) //若接收到的是停止命令的返回值，则放弃操作
-            {
-                // 这里只取值，不存储
-                return false;
-            }
-            else  //解析131数据
-            {
-                string[] ss = strData.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                this.doserate = "0" + ss[4];
-                this.hv = ss[5];
-                this.temp = ss[7];
-            }
+
 
             double dDoserate = 0.0;
             try
             {
+                string strData = System.Text.Encoding.Default.GetString(line);
+                if (strData.Contains("Data display terminated") == true) //若接收到的是停止命令的返回值，则放弃操作
+                {
+                    // 这里只取值，不存储
+                    return false;
+                }
+                else  //解析131数据
+                {
+                    string[] ss = strData.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    this.doserate = "0" + ss[4];
+                    this.hv = ss[5];
+                    this.temp = ss[7];
+                }
+
                 if (double.TryParse(this.doserate, out dDoserate))
                 {
                     double f = 1.0;
