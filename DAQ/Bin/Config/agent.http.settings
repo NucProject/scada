@@ -105,6 +105,29 @@
       <code field="channel">00200304</code>
       <code field="energy">00200305</code>
     </device>
+
+    <device id="Scada.bai9125" table="bai9125_rec" eno="010002" debug-data-time="2014-09-20 12:00:00">
+      <code field="gammalong">01000201</code>
+      <code field="gammacps">01000202</code>
+      <code field="emissionlong">01000203</code>
+      <code field="emissioncps">01000204</code>
+      <code field="betacps">01000205</code>
+      <code field="status">01000206</code>
+      <code field="valve1">01000207</code>
+      <code field="valve2">01000208</code>
+      <code field="valve2">01000209</code>
+    </device>
+
+
+    <device id="Scada.bai9850" table="bai9850_rec" eno="999000" debug-data-time="2014-09-09 12:00:00">
+      <code field="alphaactivity">99900001</code>
+      <code field="alpha">99900002</code>
+      <code field="betaactivity">99900003</code>
+      <code field="beta">99900004</code>
+      <code field="i131activity">99900005</code>
+      <code field="i131">99900006</code>
+      <code field="doserate">99900007</code>
+    </device>    
     -->
   </devices>
 </settings>

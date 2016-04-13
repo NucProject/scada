@@ -178,6 +178,8 @@ namespace Scada.Data.Client
                 return "labrfilter";
             else if (deviceKey == Devices.LabrNuclideFilter)
                 return "labrnuclidefilter";
+            else if (deviceKey == Devices.Bai9850)
+                return "bai9850";
             else
                 return string.Empty;
         }

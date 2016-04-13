@@ -31,5 +31,7 @@ namespace Scada.Data.Client
         public const string LabrFilter = Prefix + "labrfilter";
 
         public const string LabrNuclideFilter = Prefix + "labrnuclidefilter";
+
+        public const string Bai9850 = Prefix + "bai9850";
     }
 }

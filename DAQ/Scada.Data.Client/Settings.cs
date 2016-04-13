@@ -30,7 +30,8 @@ namespace Scada.Data.Client
                                 Devices.HPGe,
                                 Devices.Labr,
                                 Devices.LabrFilter,
-                                Devices.LabrNuclideFilter
+                                Devices.LabrNuclideFilter,
+                                Devices.Bai9850
                                      };
 
         public string[] DataDeviceKeys = {
@@ -41,7 +42,8 @@ namespace Scada.Data.Client
                                 Devices.CinderellaStatus,
                                 Devices.Shelter,
                                 Devices.LabrFilter,
-                                Devices.LabrNuclideFilter
+                                Devices.LabrNuclideFilter,
+                                Devices.Bai9850
                                      };
 
         public string[] FileDeviceKeys = {
