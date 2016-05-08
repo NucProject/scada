@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2013 for Windows Desktop
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.Declare", "Scada.Declare\Scada.Declare.csproj", "{CC1F00BD-567A-4EFE-8F6E-C10E7183409D}"
 EndProject
@@ -36,6 +36,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.Logger.Server", "Scada.Logger.Server\Scada.Logger.Server.csproj", "{07F60F28-900E-44B1-98C6-D8686B255DAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.About", "Scada.About\Scada.About.csproj", "{C9A8BAFD-2C39-437E-9EE5-5FE267D80D1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.Data.Hub", "Scada.Data.Hub\Scada.Data.Hub.csproj", "{E9527C97-E61E-43DC-95A8-35EE918491AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -253,6 +255,22 @@ Global
 		{C9A8BAFD-2C39-437E-9EE5-5FE267D80D1A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{C9A8BAFD-2C39-437E-9EE5-5FE267D80D1A}.Release|Win32.ActiveCfg = Release|Any CPU
 		{C9A8BAFD-2C39-437E-9EE5-5FE267D80D1A}.Release|x86.ActiveCfg = Release|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Debug|Win32.Build.0 = Debug|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Debug|x86.Build.0 = Debug|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|Win32.ActiveCfg = Release|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|Win32.Build.0 = Release|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|x86.ActiveCfg = Release|Any CPU
+		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
