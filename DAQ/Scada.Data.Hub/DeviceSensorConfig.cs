@@ -12,6 +12,8 @@ namespace Scada.Data.Hub
     {
         public string SensorName{ get; set; }
 
+        public string DisplayName { get; set; }
+
         public string FieldName { get; set; }
     }
 
@@ -21,7 +23,7 @@ namespace Scada.Data.Hub
 
         public string Name { get; set; }
 
-        private string displayName = null;
+        public string DisplayName { get; set; }
 
         private string deviceConfigFile = null;
 
@@ -29,9 +31,12 @@ namespace Scada.Data.Hub
 
         public string TableName { get; set; }
 
+        public bool AtAnyTime { get; internal set; }
+
         public DeviceConfig(string deviceConfigFile)
         {
             this.deviceConfigFile = deviceConfigFile;
+            this.AtAnyTime = false;
         }
 
         public static DeviceConfig LoadConfigFrom(string deviceConfigFile)
@@ -65,16 +70,28 @@ namespace Scada.Data.Hub
                 }
                 else if (tagName == "displayname")
                 {
-                    this.displayName = node.InnerText;
+                    this.DisplayName = node.InnerText;
+                }
+                else if (tagName == "sensors")
+                {
+                    var sensorNodes = node.SelectNodes("//sensor");
+                    foreach (XmlNode sensor in sensorNodes)
+                    {
+                        SensorConfig sensorConfig = new SensorConfig();
+                        sensorConfig.SensorName = sensor.SelectSingleNode("name").InnerText;
+                        sensorConfig.DisplayName = sensor.SelectSingleNode("displayname").InnerText;
+                        this.sensorConfigList.Add(sensorConfig);
+                    }
                 }
             }
-            SensorConfig sensorConfig = new SensorConfig();
-            this.sensorConfigList.Add(sensorConfig);
+
         }
     }
 
     public class HubConfig
     {
+        public static string StationId = "";
+
         private string configPath = null; 
 
         private List<DeviceConfig> deviceConfigList = new List<DeviceConfig>();
