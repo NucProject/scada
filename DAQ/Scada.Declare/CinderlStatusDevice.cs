@@ -39,6 +39,20 @@ namespace Scada.Declare
             Mode24_Process_LeadClose = 9		                //QA测量完毕，铅室盖完全关闭
         }
 
+        private enum Mode8_Process
+        {
+            Mode8_Process_SampleMeasure = 0,	                //初始状态/样品测量
+            Mode8_Process_ChangeStart = 1,	                    //机械臂开始移动
+            Mode8_Process_MovingPlate = 2,	                    //开始拖动滤纸夹
+            Mode8_Process_Cutting = 3,	                        //滤纸夹就位，开始切割
+            Mode8_Process_MovingLead_AfterCutting = 4,	        //切割完毕，铅室盖打开中
+            Mode8_Process_LeadOpen_AfterCutting = 5,		    //完全打开铅室盖
+            Mode8_Process_StartQA = 6,		                    //开始QA测量
+            Mode8_Process_QAFinish = 7,		                    //QA测量结束
+            Mode8_Process_MovingLead_AfterQAFinish = 8,		    //QA测量完毕，铅室盖关闭中
+            Mode8_Process_LeadClose = 9		                    //QA测量完毕，铅室盖完全关闭
+        }
+
         //状态、报警
         private bool Status_BackPlexDoor = false;	    //后玻璃门状态
         private bool Status_Flow = false;	            //采样流量状态
@@ -418,7 +432,195 @@ namespace Scada.Declare
         private bool Mode8(string[] data)
         {
             RecordManager.DoSystemEventRecord(this, "进入8小时模式", RecordType.Event);
-            return true;
+
+            // 状态 = 00110
+            if (data[23] == "0" && data[7] == "0" && data[3] == "1" && data[2] == "1" && data[1] == "0")
+            {
+                Running_Process = (int)Mode8_Process.Mode8_Process_SampleMeasure;
+
+                RecordManager.DoSystemEventRecord(this, "初始状态/样品测量", RecordType.Event);
+                return true;
+            }
+
+            // 状态 = 10110
+            if (data[23] == "1" && data[7] == "0" && data[3] == "1" && data[2] == "1" && data[1] == "0")
+            {
+                // 判断是否原有状态之一，避免状态重复出现
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_ChangeStart ||
+                    Running_Process == (int)Mode8_Process.Mode8_Process_Cutting ||
+                    Running_Process == (int)Mode8_Process.Mode8_Process_LeadClose)
+                {
+                    return true;
+                }
+
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_SampleMeasure)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_ChangeStart;
+
+                    RecordManager.DoSystemEventRecord(this, "机械臂开始移动", RecordType.Event);
+                    return true;
+                }
+
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_MovingPlate)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_Cutting;
+
+                    RecordManager.DoSystemEventRecord(this, "滤纸夹就位，开始切割", RecordType.Event);
+                    return true;
+                }
+
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_MovingLead_AfterQAFinish)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_LeadClose;
+
+                    RecordManager.DoSystemEventRecord(this, "铅室盖完全关闭，准备开始样品测量", RecordType.Event);
+
+                    // to do sample measurement
+                    ExecSample24HourMeasure();
+
+                    return true;
+                }
+
+                else
+                {
+                    RecordManager.DoSystemEventRecord(this, "未知状态，状态号10110", RecordType.Event);
+                    return false;
+                }
+
+            }
+
+            // 状态 = 10010
+            if (data[23] == "1" && data[7] == "0" && data[3] == "0" && data[2] == "1" && data[1] == "0")
+            {
+                // 判断是否原有状态之一，避免状态重复出现
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_MovingPlate)
+                {
+                    return true;
+                }
+
+                Running_Process = (int)Mode8_Process.Mode8_Process_MovingPlate;
+                RecordManager.DoSystemEventRecord(this, "开始移动滤纸夹", RecordType.Event);
+                return true;
+
+                /*
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_ChangeStart)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_MovingPlate;
+
+                    RecordManager.DoSystemEventRecord(this, "开始移动滤纸夹", RecordType.Event);
+                    return true;
+                }
+                else
+                {
+                    RecordManager.DoSystemEventRecord(this, "未知状态，状态号10010", RecordType.Event);
+                    return false;
+                }
+                * */
+            }
+
+            // 状态 = 10100
+            if (data[23] == "1" && data[7] == "0" && data[3] == "1" && data[2] == "0" && data[1] == "0")
+            {
+                // 判断是否原有状态之一，避免状态重复出现
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_MovingLead_AfterCutting ||
+                    Running_Process == (int)Mode8_Process.Mode8_Process_MovingLead_AfterQAFinish)
+                {
+                    return true;
+                }
+
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_Cutting)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_MovingLead_AfterCutting;
+
+                    RecordManager.DoSystemEventRecord(this, "切割完毕，打开铅室盖中", RecordType.Event);
+                    return true;
+                }
+
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_QAFinish)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_MovingLead_AfterQAFinish;
+
+                    RecordManager.DoSystemEventRecord(this, "QA测量结束，关闭铅室盖中", RecordType.Event);
+                    return true;
+                }
+
+                else
+                {
+                    RecordManager.DoSystemEventRecord(this, "未知状态，状态号10100", RecordType.Event);
+                    return false;
+                }
+            }
+
+            // 状态 = 10101
+            if (data[23] == "1" && data[7] == "0" && data[3] == "1" && data[2] == "0" && data[1] == "1")
+            {
+                // 判断是否原有状态之一，避免状态重复出现
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_LeadOpen_AfterCutting ||
+                    Running_Process == (int)Mode8_Process.Mode8_Process_QAFinish)
+                {
+                    return true;
+                }
+
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_MovingLead_AfterCutting)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_LeadOpen_AfterCutting;
+
+                    RecordManager.DoSystemEventRecord(this, "切割结束，铅室盖打开完毕", RecordType.Event);
+                    return true;
+                }
+
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_StartQA)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_QAFinish;
+
+                    RecordManager.DoSystemEventRecord(this, "QA测量结束", RecordType.Event);
+                    return true;
+                }
+
+                else
+                {
+                    RecordManager.DoSystemEventRecord(this, "未知状态，状态号10101", RecordType.Event);
+                    return false;
+                }
+            }
+
+            // 状态 = 11101
+            if (data[23] == "1" && data[7] == "1" && data[3] == "1" && data[2] == "0" && data[1] == "1")
+            {
+                // 判断是否原有状态之一，避免状态重复出现
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_StartQA)
+                {
+                    return true;
+                }
+
+                Running_Process = (int)Mode8_Process.Mode8_Process_StartQA;
+                RecordManager.DoSystemEventRecord(this, "开始QA测量", RecordType.Event);
+                return true;
+
+                /*
+                if (Running_Process == (int)Mode8_Process.Mode8_Process_LeadOpen_AfterCutting)
+                {
+                    Running_Process = (int)Mode8_Process.Mode8_Process_StartQA;
+
+                    RecordManager.DoSystemEventRecord(this, "开始QA测量", RecordType.Event);
+
+                    // to do QA Measurement
+                    // ExecQAMeasure();
+                    return true;
+                }
+                else
+                {
+                    RecordManager.DoSystemEventRecord(this, "未知状态，状态号11101", RecordType.Event);
+                    return false;
+                }
+                 * */
+            }
+
+            else
+            {
+                RecordManager.DoSystemEventRecord(this, "未知状态，8小时模式", RecordType.Event);
+                return false;
+            }
         }
 
         private bool Mode6(string[] data)
@@ -435,7 +637,7 @@ namespace Scada.Declare
 
         private bool Mode24(string[] data)
         {
-            //RecordManager.DoSystemEventRecord(this, "进入24小时模式", RecordType.Event);
+            RecordManager.DoSystemEventRecord(this, "进入24小时模式", RecordType.Event);
 
             // 状态 = 00110
             if (data[23] == "0" && data[7] == "0" && data[3] == "1" && data[2] == "1" && data[1] == "0")

@@ -141,7 +141,7 @@ namespace Scada.Declare
                 {
                     string filename = Path.GetFileName(vFile);
                     filename = filename.ToLower();
-                    if (File.GetLastWriteTime(vFile) >= DateTime.Now.AddSeconds(-120)) // 如果文件是在2分钟内修改
+                    if (/*File.GetLastWriteTime(vFile) >= DateTime.Now.AddSeconds(-120)*/true) // 如果文件是在2分钟内修改
                     {
                         if (filename.Contains("qaspectra.spe"))
                         {
