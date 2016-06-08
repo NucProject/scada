@@ -10,7 +10,7 @@ namespace Scada.Data.Hub
     {
         internal string GetUrl(string v)
         {
-            throw new NotImplementedException();
+            return "http://127.0.0.1:9090/" + v;
         }
     }
 }

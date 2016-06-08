@@ -55,6 +55,10 @@ namespace Scada.Data.Hub
             set;
         }
 
+        public DataAgent()
+        {
+            this.RemoteDataHub = new RemoteDataHub();
+        }
 
         /// <summary>
         /// Upload Data Entry
@@ -216,19 +220,17 @@ namespace Scada.Data.Hub
             try
             {
                 Uri uri = new Uri(api);
-                byte[] data = Encoding.ASCII.GetBytes(packet.ToString());
+                byte[] data = Encoding.ASCII.GetBytes(packet.ToJson());
                 using (WebClient wc = new WebClient())
                 {
                     Byte[] result = wc.UploadData(uri, "POST", data);
                     string strResult = Encoding.ASCII.GetString(result);
-                    //this.NotifyEvent(this, NotifyEvents.SendDataOK, new NotifyEvent() { DeviceKey = packet.DeviceKey, Message = strResult });
 
                     return true;
                 }
             }
             catch (Exception e)
             {
-                //this.NotifyEvent(this, NotifyEvents.DebugMessage, new NotifyEvent() { DeviceKey = packet.DeviceKey, Message = e.Message });
                 this.HandleWebException(e);
                 return false;
             }

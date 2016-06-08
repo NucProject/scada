@@ -22,11 +22,17 @@ namespace Scada.Data.Hub
 
         private Thread currentThread;
 
+        public int UpdateFrequency { get; set; }
+
+        private DataAgent agent;
+
 
 
         public HubMainForm()
         {
             InitializeComponent();
+
+            this.UpdateFrequency = 10;
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -98,6 +104,8 @@ namespace Scada.Data.Hub
         {
             var dict = this.GetThreadInfoDict();
 
+            this.agent = new DataAgent();
+
             SynchronizationContext sc = (SynchronizationContext)param;
             long counter = 0;
             while (true)
@@ -110,12 +118,13 @@ namespace Scada.Data.Hub
                 UINotifyEvent notify = UINotifyEvent.CreateNotifyEvent("");
                 foreach (var deviceConfig in this.config.GetAllDeviceConfig())
                 {
-                    if (!this.IsTimeOkToSendDeviceData(deviceConfig))
+                    DateTime time;
+                    if (!this.IsTimeOkToSendDeviceData(deviceConfig, out time))
                     {
-                        //continue;
+                        continue;
                     }
 
-                    if (this.SendDeviceData(deviceConfig))
+                    if (this.SendDeviceData(deviceConfig, time))
                     {
                         string deviceKey = deviceConfig.Name.ToLower();
                         DeviceSendInfo sendInfo = dict[deviceKey];
@@ -123,7 +132,7 @@ namespace Scada.Data.Hub
                     }
                 }
 
-                if (counter % 10 == 0)
+                if (counter % this.UpdateFrequency == 0)
                 {
                     notify.SetDevicesInfo(dict);
                     sc.Post(new SendOrPostCallback(this.OnSendDeviceDataCallback), notify);
@@ -151,9 +160,6 @@ namespace Scada.Data.Hub
                 listItem.SubItems[3].Text = "0000-00-00 00:00:00";
             }
 
-
-
-
             connectStatusLabel.Text = this.NetConnected ? "连接" : "未连接";
 
             // 更新线程运行时间
@@ -164,9 +170,11 @@ namespace Scada.Data.Hub
         /// Threading operation
         /// </summary>
         /// <param name="deviceConfig"></param>
-        private bool SendDeviceData(DeviceConfig deviceConfig)
+        private bool SendDeviceData(DeviceConfig deviceConfig, DateTime time)
         {
+            Packet p = Packet.CreateRealtimePacket(deviceConfig, time);
 
+            this.agent.SendDataPacket(p, time);
             return true;
         }
 
@@ -175,17 +183,19 @@ namespace Scada.Data.Hub
         /// </summary>
         /// <param name="deviceConfig"></param>
         /// <returns></returns>
-        private bool IsTimeOkToSendDeviceData(DeviceConfig deviceConfig)
+        private bool IsTimeOkToSendDeviceData(DeviceConfig deviceConfig, out DateTime time)
         {
-            if (deviceConfig.AtAnyTime)
+            if (deviceConfig.TimeToSend == DeviceConfig.Anytime)
             {
+                time = DateTime.Now;
                 return true;
             }
             else
             {
-
+                time = DateTime.Now; // TODO:
+                return true;
             }
-            return false;
+            // return false;
         }
 
         private void configTabPage_Click(object sender, EventArgs e)

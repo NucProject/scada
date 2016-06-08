@@ -8,6 +8,12 @@ using System.Windows.Forms;
 
 namespace Scada.Data.Hub
 {
+    public class ValueItem
+    {
+        public string Name { get; set; }
+        public object Value{ get; set; }
+    }
+
     /*
     {
     "type": "realtime",
@@ -37,12 +43,15 @@ namespace Scada.Data.Hub
 
         public const string TokenKey = "token";
 
-        // Content
-        private JObject jobject = new JObject();
+        public bool realtime = true;
+
+        public DateTime time { get; set; }
 
         private int result = 0;
 
         private bool hasResult = false;
+
+        private List<ValueItem> valueList = null;
 
         public bool IsFilePacket
         {
@@ -58,12 +67,6 @@ namespace Scada.Data.Hub
 
         public Packet()
         {
-        }
-
-        public Packet(string token)
-        {
-            this.Station = HubConfig.StationId;
-            this.Token = token;
         }
 
         private int Result
@@ -98,117 +101,22 @@ namespace Scada.Data.Hub
             set;
         }
 
-        /// <summary>
-        /// Interface
-        /// </summary>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        public string GetProperty(string propertyName)
-        {
-            return Packet.GetProperty(propertyName, this.jobject);
-        }
-
-        /// <summary>
-        /// GetProperty implements
-        /// </summary>
-        /// <param name="propertyName"></param>
-        /// <param name="jsonObject"></param>
-        /// <returns></returns>
-        private static string GetProperty(string propertyName, JObject jsonObject)
-        {
-            JToken s = jsonObject[propertyName];
-            if (s != null)
-            {
-                return s.ToString();
-            }
-            return string.Empty;
-        }
-
-        public string Station
-        {
-            get
-            {
-                return this.GetProperty(StationKey);
-            }
-            set
-            {
-                this.jobject[StationKey] = value;
-            }
-        }
-
-        public string Token
-        {
-            get
-            {
-                return this.GetProperty(TokenKey);
-            }
-            set
-            {
-                this.jobject[TokenKey] = value;
-            }
-        }
-
-        public void setRealtime()
-        {
-            this.jobject["realtime"] = 1;
-        }
-
-        public void setHistory()
-        {
-            this.jobject["history"] = 1;
-        }
-
-        public override string ToString()
-        {
-            if (this.hasResult)
-            {
-                this.jobject["result"] = this.Result;
-            }
-            return this.jobject.ToString();
-        }
-
-        private JArray GetEntries()
-        {
-            JArray entries = (JArray)this.jobject[EntryKey];
-            if (entries == null)
-            {
-                entries = new JArray();
-                this.jobject[EntryKey] = entries;
-            }
-            return (JArray)entries;
-        }
-
-        internal JObject GetEntry(int index = 0)
-        {
-            return (JObject)this.GetEntries()[index];
-        }
-
-        internal void AppendEntry(JObject entry)
-        {
-            this.GetEntries().Add(entry);
-        }
-
-        private JObject BuildObject(string deviceId, Dictionary<string, object> data, bool realtime = true)
+        public string ToJson()
         {
             JObject json = new JObject();
-            if (realtime)
-            {
-                json["type"] = "realtime";
-                json["time"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            }
-            else
-            {
-                json["type"] = "history";
-                json["time"] = "";
-            }
 
-            
-            json["Device_id"] = deviceId;
+            json["type"] = this.realtime ? "realtime" : "history";
+            json["time"] = this.time.ToString("yyyy-MM-dd HH:mm:ss");
+            json["Device_id"] = this.DeviceKey;
 
             JArray values = new JArray();
+            foreach (var valueItem in this.valueList)
+            {
+
+            }
             
             json["values"] = values;
-            return json;
+            return json.ToString();
         }
 
         
@@ -229,7 +137,19 @@ namespace Scada.Data.Hub
             long unixTime = (long)Math.Round((dateTime - StartTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
             return unixTime / 1000;
         }
-        
+
+        public static Packet CreateRealtimePacket(DeviceConfig deviceConfig, DateTime time)
+        {
+            var p = new Packet();
+            p.realtime = true;
+            p.time = time;
+            p.DeviceKey = deviceConfig.DeviceKey;
+            List<ValueItem> valueList = new List<ValueItem>();
+            p.valueList = valueList;
+            return p;
+        }
+
+
 
         public string Path
         {

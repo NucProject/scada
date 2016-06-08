@@ -19,6 +19,10 @@ namespace Scada.Data.Hub
 
     public class DeviceConfig
     {
+        public const int Anytime = 0;
+
+        public const int Every30s = 30;
+
         private string version = null;
 
         public string Name { get; set; }
@@ -31,12 +35,14 @@ namespace Scada.Data.Hub
 
         public string TableName { get; set; }
 
-        public bool AtAnyTime { get; internal set; }
+        public int TimeToSend { get; internal set; }
+
+        public string DeviceKey { get; set; }
 
         public DeviceConfig(string deviceConfigFile)
         {
             this.deviceConfigFile = deviceConfigFile;
-            this.AtAnyTime = false;
+            this.TimeToSend = Anytime;
         }
 
         public static DeviceConfig LoadConfigFrom(string deviceConfigFile)
@@ -68,9 +74,20 @@ namespace Scada.Data.Hub
                 {
                     this.Name = node.InnerText;
                 }
-                else if (tagName == "displayname")
+                else if (tagName == "displayname")  // DisplayName
                 {
                     this.DisplayName = node.InnerText;
+                }
+                else if (tagName == "timetosend")   // timeToSend
+                {
+                    if (node.InnerText == "anytime")
+                    {
+                        this.TimeToSend = 0;
+                    }
+                    else
+                    {
+                        this.TimeToSend = 30;
+                    }
                 }
                 else if (tagName == "sensors")
                 {
