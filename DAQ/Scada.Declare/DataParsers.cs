@@ -35,5 +35,10 @@ namespace Scada.Declare
         {
             return false;
         }
+
+        internal string[] Search(byte[] line, object lastLine)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

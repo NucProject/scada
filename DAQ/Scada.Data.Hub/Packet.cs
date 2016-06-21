@@ -11,7 +11,7 @@ namespace Scada.Data.Hub
     public class ValueItem
     {
         public string Name { get; set; }
-        public object Value{ get; set; }
+        public string Value{ get; set; }
     }
 
     /*
@@ -106,13 +106,23 @@ namespace Scada.Data.Hub
             JObject json = new JObject();
 
             json["type"] = this.realtime ? "realtime" : "history";
-            json["time"] = this.time.ToString("yyyy-MM-dd HH:mm:ss");
+            
             json["Device_id"] = this.DeviceKey;
 
             JArray values = new JArray();
-            foreach (var valueItem in this.valueList)
+            foreach (ValueItem valueItem in this.valueList)
             {
-
+                if (valueItem.Name.ToLower() == "time")
+                {
+                    json["time"] = valueItem.Value;
+                }
+                else
+                {
+                    JObject sensorValue = new JObject();
+                    sensorValue["sensor"] = valueItem.Name;
+                    sensorValue["value"] = valueItem.Value;
+                    values.Add(sensorValue);
+                }
             }
             
             json["values"] = values;
@@ -142,14 +152,30 @@ namespace Scada.Data.Hub
         {
             var p = new Packet();
             p.realtime = true;
-            p.time = time;
+            
             p.DeviceKey = deviceConfig.DeviceKey;
-            List<ValueItem> valueList = new List<ValueItem>();
+            List<ValueItem> valueList = DataSource.GetInstance().GetValueList(deviceConfig, time);
+            if (valueList == null)
+            {
+                return null;
+            }
+            foreach (ValueItem valueItem in valueList)
+            {
+                if (valueItem.Name.ToLower() == "time")
+                {
+                    p.time = DateTime.Parse(valueItem.Value);
+                }
+            }
             p.valueList = valueList;
             return p;
         }
 
-
+        public bool SetSendStatus(DeviceConfig deviceConfig, DateTime time)
+        {
+            DateTime packetTime = this.time;
+            DataSource.GetInstance().SetSendStatus(deviceConfig, packetTime);
+            return true;
+        }
 
         public string Path
         {

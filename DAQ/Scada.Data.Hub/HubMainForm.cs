@@ -173,8 +173,16 @@ namespace Scada.Data.Hub
         private bool SendDeviceData(DeviceConfig deviceConfig, DateTime time)
         {
             Packet p = Packet.CreateRealtimePacket(deviceConfig, time);
+            if (p == null)
+            {
+                return false;
+            }
+            string action = deviceConfig.Action;
+            if (this.agent.SendDataPacket(action, p, time))
+            {
+                p.SetSendStatus(deviceConfig, time);
+            }
 
-            this.agent.SendDataPacket(p, time);
             return true;
         }
 

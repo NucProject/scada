@@ -114,6 +114,7 @@ namespace Scada.Declare
                     {
                         string at = string.Format("@{0}", i + 1);
                         this.cmd.Parameters.AddWithValue(at, items[i]);
+                        // RecordManager.DoSystemEventRecord(data.Device, string.Format("{0} => {1}", i + 1, items[i]), RecordType.Error);
                     }
                     
                     int num = this.cmd.ExecuteNonQuery();

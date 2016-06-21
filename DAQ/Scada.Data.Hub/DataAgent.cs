@@ -65,9 +65,14 @@ namespace Scada.Data.Hub
         /// </summary>
         /// <param name="packet"></param>
         /// <param name="time"></param>
-        internal bool SendDataPacket(Packet packet, DateTime time)
+        internal bool SendDataPacket(string action, Packet packet, DateTime time)
         {
-            return this.Send(this.RemoteDataHub.GetUrl("data/commit"), packet, time);
+            if (string.IsNullOrEmpty(action))
+            {
+                action = this.RemoteDataHub.GetUrl("send/data");
+            }
+            
+            return this.Send(action, packet, time);
         }
 
         /// <summary>
@@ -201,7 +206,7 @@ namespace Scada.Data.Hub
         {
             if (!p.IsFilePacket)
             {
-                return this.SendDataPacket(p, default(DateTime));
+                return this.SendDataPacket("", p, default(DateTime));
             }
             else
             {
@@ -219,6 +224,10 @@ namespace Scada.Data.Hub
         {
             try
             {
+                StreamWriter sw = new StreamWriter("s.txt", true);
+                sw.Write(packet.time.ToString() + "\r\n");
+                sw.Close();
+
                 Uri uri = new Uri(api);
                 byte[] data = Encoding.ASCII.GetBytes(packet.ToJson());
                 using (WebClient wc = new WebClient())
@@ -232,6 +241,9 @@ namespace Scada.Data.Hub
             catch (Exception e)
             {
                 this.HandleWebException(e);
+                StreamWriter sw = new StreamWriter("e.txt", true);
+                sw.Write(e.StackTrace + "\r\n");
+                sw.Close();
                 return false;
             }
         }

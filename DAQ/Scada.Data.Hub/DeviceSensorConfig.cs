@@ -33,11 +33,15 @@ namespace Scada.Data.Hub
 
         private List<SensorConfig> sensorConfigList = new List<SensorConfig>();
 
+        internal DateTime lastTime = default(DateTime);
+
         public string TableName { get; set; }
 
         public int TimeToSend { get; internal set; }
 
         public string DeviceKey { get; set; }
+
+        public string Action;
 
         public DeviceConfig(string deviceConfigFile)
         {
@@ -78,6 +82,14 @@ namespace Scada.Data.Hub
                 {
                     this.DisplayName = node.InnerText;
                 }
+                else if (tagName == "deviceid")  // DisplayName
+                {
+                    this.DeviceKey = node.InnerText;
+                }
+                else if (tagName == "action")  // DisplayName
+                {
+                    this.Action = node.InnerText;
+                }
                 else if (tagName == "timetosend")   // timeToSend
                 {
                     if (node.InnerText == "anytime")
@@ -89,6 +101,10 @@ namespace Scada.Data.Hub
                         this.TimeToSend = 30;
                     }
                 }
+                else if (tagName == "table")
+                {
+                    this.TableName = node.InnerText;
+                }
                 else if (tagName == "sensors")
                 {
                     var sensorNodes = node.SelectNodes("//sensor");
@@ -96,12 +112,23 @@ namespace Scada.Data.Hub
                     {
                         SensorConfig sensorConfig = new SensorConfig();
                         sensorConfig.SensorName = sensor.SelectSingleNode("name").InnerText;
+                        sensorConfig.FieldName = sensor.SelectSingleNode("field").InnerText;
                         sensorConfig.DisplayName = sensor.SelectSingleNode("displayname").InnerText;
                         this.sensorConfigList.Add(sensorConfig);
                     }
                 }
             }
 
+        }
+
+        private Dictionary<string, string> dict = new Dictionary<string, string>(10);
+        
+
+        internal Dictionary<string, string> GetDict(string dataTime)
+        {
+            dict.Clear();
+            dict.Add("Time", dataTime);
+            return dict;
         }
     }
 

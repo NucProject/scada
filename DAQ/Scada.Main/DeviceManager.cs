@@ -321,6 +321,10 @@ namespace Scada.Main
             {
                 return new NEW131(entry);
             }
+            else if (typeof(Amb8059Device).ToString() == className)
+            {
+                return new Amb8059Device(entry);
+            }
 
             // Other Device defined in some Assemblies.
             if (entry[DeviceEntry.Assembly] != null)
