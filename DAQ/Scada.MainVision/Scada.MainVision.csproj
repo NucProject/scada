@@ -325,10 +325,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Scada.Chart\Scada.Chart.csproj">
-      <Project>{b6af3022-1ba4-4f1f-a7a3-35ece6d5d5f4}</Project>
-      <Name>Scada.Chart</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Scada.Common\Scada.Common.csproj">
       <Project>{d18cb829-8870-41e7-b4ec-d9033aced3c5}</Project>
       <Name>Scada.Common</Name>
