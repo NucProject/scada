@@ -1,15 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
-using Scada.Config;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
+
 
 namespace Scada.Data.Hub
 {
@@ -48,7 +43,9 @@ namespace Scada.Data.Hub
         public event OnNotifyEvent NotifyEvent;
 
         private WebClient commandClient;
-        
+
+        private int timeoutCount = 0;
+
         internal RemoteDataHub RemoteDataHub
         {
             get;
@@ -71,8 +68,24 @@ namespace Scada.Data.Hub
             {
                 action = this.RemoteDataHub.GetUrl("send/data");
             }
-            
-            return this.Send(action, packet, time);
+            try
+            {
+                return this.Send(action, packet, time);
+            }
+            catch (TimeoutException timeout)
+            {
+                this.timeoutCount += 1;
+                return false;
+            }
+            catch (Exception e)
+            {
+                this.HandleWebException(e);
+                StreamWriter sw = new StreamWriter("e.txt", true);
+                sw.Write(e.StackTrace + "\r\n");
+                sw.Close();
+                return false;
+            }
+
         }
 
         /// <summary>
@@ -197,12 +210,12 @@ namespace Scada.Data.Hub
         /// Send Dispatcher
         /// </summary>
         /// <param name="p"></param>
-        internal bool SendPacket(Packet p)
+        internal bool SendPacket(HubPacket p)
         {
             return this.SendPacket(p, false);
         }
 
-        private bool SendPacket(Packet p, bool fromNewThread)
+        private bool SendPacket(HubPacket p, bool fromNewThread)
         {
             if (!p.IsFilePacket)
             {
@@ -222,33 +235,25 @@ namespace Scada.Data.Hub
         /// <param name="time"></param>
         private bool Send(string api, Packet packet, DateTime time)
         {
-            try
+            using (WebClientEx wc = new WebClientEx())
             {
-                StreamWriter sw = new StreamWriter("s.txt", true);
-                sw.Write(packet.time.ToString() + "\r\n");
-                sw.Close();
-
-                Uri uri = new Uri(api);
-                byte[] data = Encoding.ASCII.GetBytes(packet.ToJson());
-                using (WebClient wc = new WebClient())
+                wc.Timeout = Timeout; // Set timeout 5 seconds
+                string results = wc.PostData(api, packet.ToString());
+                
+                try
                 {
-                    Byte[] result = wc.UploadData(uri, "POST", data);
-                    string strResult = Encoding.ASCII.GetString(result);
-
-                    return true;
+                    JObject.Parse(results);
                 }
-            }
-            catch (Exception e)
-            {
-                this.HandleWebException(e);
-                StreamWriter sw = new StreamWriter("e.txt", true);
-                sw.Write(e.StackTrace + "\r\n");
-                sw.Close();
-                return false;
+                catch (Exception e)
+                {
+
+                }
+                
+                return true;
             }
         }
 
-        string GetPacketSID(Packet p)
+        string GetPacketSID(HubPacket p)
         {
             string tmp = p.Path;
             int endIndex = tmp.LastIndexOf("\\");
@@ -257,7 +262,7 @@ namespace Scada.Data.Hub
             return tmp.Substring(startIndex + 1, tmp.Length - startIndex - 1);
         }
 
-        void RemoveOccupiedToken(Packet p)
+        void RemoveOccupiedToken(HubPacket p)
         {
             string fileNameWithToken = p.Path;
 
@@ -275,7 +280,7 @@ namespace Scada.Data.Hub
         /// Upload File
         /// </summary>
         /// <param name="packet"></param>
-        internal bool SendFilePacket(Packet packet)
+        internal bool SendFilePacket(HubPacket packet)
         {
             if (string.IsNullOrEmpty(packet.Path) || !File.Exists(packet.Path))
             {
@@ -326,7 +331,7 @@ namespace Scada.Data.Hub
             }
         }
 
-        private string GetRelFilePath(Packet packet)
+        private string GetRelFilePath(HubPacket packet)
         {
             if (packet.FileType.Equals("labr", StringComparison.OrdinalIgnoreCase))
             {
@@ -454,11 +459,6 @@ namespace Scada.Data.Hub
             {
                 // TODO: No response!
             }
-        }
-      
-        // Connect means first HTTP packet to the data Center.
-        internal void DoAuth()
-        {
         }
     }
 }

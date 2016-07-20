@@ -67,10 +67,15 @@
       <DependentUpon>HubMainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="NotifyEvent.cs" />
+    <Compile Include="HubPacket.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteDataHub.cs" />
+    <Compile Include="Tools.cs" />
+    <Compile Include="WebClientEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="HubMainForm.resx">
       <DependentUpon>HubMainForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -41,12 +41,15 @@ namespace Scada.Data.Hub
 
         public string DeviceKey { get; set; }
 
+        public bool IsHubFormat { get; internal set; }
+
         public string Action;
 
         public DeviceConfig(string deviceConfigFile)
         {
             this.deviceConfigFile = deviceConfigFile;
             this.TimeToSend = Anytime;
+            this.IsHubFormat = true;
         }
 
         public static DeviceConfig LoadConfigFrom(string deviceConfigFile)
@@ -104,6 +107,10 @@ namespace Scada.Data.Hub
                 else if (tagName == "table")
                 {
                     this.TableName = node.InnerText;
+                }
+                else if (tagName == "format")
+                {
+                    this.IsHubFormat = (node.InnerText == "Hub");
                 }
                 else if (tagName == "sensors")
                 {

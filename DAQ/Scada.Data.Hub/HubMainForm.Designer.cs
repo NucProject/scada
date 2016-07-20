@@ -33,6 +33,10 @@
             this.deviceTreeView = new System.Windows.Forms.TreeView();
             this.sendTabPage = new System.Windows.Forms.TabPage();
             this.sendDataList = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuBar = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,10 +46,6 @@
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.connectStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.threadStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.mainTab.SuspendLayout();
             this.configTabPage.SuspendLayout();
             this.sendTabPage.SuspendLayout();
@@ -108,6 +108,26 @@
             this.sendDataList.TabIndex = 0;
             this.sendDataList.UseCompatibleStateImageBehavior = false;
             this.sendDataList.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "设备名称";
+            this.columnHeader1.Width = 119;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "当日发送数量";
+            this.columnHeader2.Width = 130;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "累积发送数量";
+            this.columnHeader3.Width = 143;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "最后发送时间";
+            this.columnHeader4.Width = 235;
             // 
             // menuBar
             // 
@@ -178,26 +198,6 @@
             this.threadStatusLabel.Size = new System.Drawing.Size(59, 17);
             this.threadStatusLabel.Text = "线程时间:";
             // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "设备名称";
-            this.columnHeader1.Width = 119;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "当日发送数量";
-            this.columnHeader2.Width = 130;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "累积发送数量";
-            this.columnHeader3.Width = 143;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "最后发送时间";
-            this.columnHeader4.Width = 235;
-            // 
             // HubMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -209,6 +209,7 @@
             this.Name = "HubMainForm";
             this.Text = "数据上传";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.HubMainForm_FormClosing);
+            this.Load += new System.EventHandler(this.HubMainForm_Load);
             this.mainTab.ResumeLayout(false);
             this.configTabPage.ResumeLayout(false);
             this.sendTabPage.ResumeLayout(false);

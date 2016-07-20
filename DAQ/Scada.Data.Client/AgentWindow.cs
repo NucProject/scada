@@ -487,6 +487,12 @@ namespace Scada.Data.Client
                 DateTime ret = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, min, 0);
                 return ret;
             }
+            else if (deviceKey.Equals(Devices.Bai9850))
+            {
+                DateTime ret = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
+                DateTime time = ret.AddSeconds(-30);
+                return time; 
+            }
             // LabrFilter、labrnuclidefilter设备，每一小时发送一次
             //if ((deviceKey.Equals(Devices.LabrFilter, StringComparison.OrdinalIgnoreCase)) || (deviceKey.Equals(Devices.LabrNuclideFilter, StringComparison.OrdinalIgnoreCase)))
             //{

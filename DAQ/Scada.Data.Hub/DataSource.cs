@@ -125,7 +125,20 @@ namespace Scada.Data.Hub
         private List<ValueItem> GetTimedValueList(DeviceConfig deviceConfig, DateTime time)
         {
             List<ValueItem> ret = new List<ValueItem>();
-
+            MySqlCommand cmd = this.conn.CreateCommand();
+            if (cmd != null)
+            {
+                if (this.FetchTimeData(cmd, deviceConfig, time, ret))
+                {
+                    cmd.Dispose();
+                    return ret;
+                }
+                else
+                {
+                    cmd.Dispose();
+                    return null;
+                }
+            }
             return ret;
         }
 
@@ -155,10 +168,43 @@ namespace Scada.Data.Hub
             return false;
         }
 
+        private bool FetchTimeData(MySqlCommand cmd, DeviceConfig deviceConfig, DateTime time, List<ValueItem> ret)
+        {
+            cmd.CommandText = GetTimeDataSQL(deviceConfig, time);
+            MySqlDataReader reader = cmd.ExecuteReader();
+            if (reader == null)
+            {
+                return false;
+            }
+            if (reader.Read())
+            {
+                DateTime dataTime = reader.GetDateTime("Time");
+                ret.Add(new ValueItem() { Name = "Time", Value = dataTime.ToString("yyyy-MM-dd HH:mm:ss") });
+                deviceConfig.lastTime = dataTime;
+
+                foreach (SensorConfig sc in deviceConfig.GetSensorConfigList())
+                {
+                    string v = reader.GetString(sc.FieldName);
+                    ret.Add(new ValueItem() { Name = sc.FieldName, Value = v });
+                }
+                reader.Close();
+                return true;
+            }
+            reader.Close();
+            return false;
+        }
+
         private static string GetNotSendSQL(DeviceConfig deviceConfig, DateTime time)
         {
             // Get the recent <count> entries.
             string format = "select * from {0} where time>'{1}' and send=0 order by time";
+            string lastTimeStr = string.Format("{0:yyyy-MM-dd HH:mm:ss}", deviceConfig.lastTime);
+            return string.Format(format, deviceConfig.TableName, lastTimeStr);
+        }
+
+        private static string GetTimeDataSQL(DeviceConfig deviceConfig, DateTime time)
+        {
+            string format = "select * from {0} where time='{1}' and send=0";
             string lastTimeStr = string.Format("{0:yyyy-MM-dd HH:mm:ss}", deviceConfig.lastTime);
             return string.Format(format, deviceConfig.TableName, lastTimeStr);
         }

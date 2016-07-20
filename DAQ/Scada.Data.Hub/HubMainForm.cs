@@ -24,7 +24,7 @@ namespace Scada.Data.Hub
 
         public int UpdateFrequency { get; set; }
 
-        private DataAgent agent;
+        // private DataAgent agent;
 
 
 
@@ -73,6 +73,7 @@ namespace Scada.Data.Hub
                 this.sendDataList.Items.Add(listItem);
             }
 
+            // TODO: 可能创建多个线程
             this.StartDataThread(config);
         }
 
@@ -103,8 +104,7 @@ namespace Scada.Data.Hub
         private void DataThread(object param)
         {
             var dict = this.GetThreadInfoDict();
-
-            this.agent = new DataAgent();
+            DataAgent agent = new DataAgent();
 
             SynchronizationContext sc = (SynchronizationContext)param;
             long counter = 0;
@@ -124,7 +124,7 @@ namespace Scada.Data.Hub
                         continue;
                     }
 
-                    if (this.SendDeviceData(deviceConfig, time))
+                    if (this.SendDeviceData(agent, deviceConfig, time))
                     {
                         string deviceKey = deviceConfig.Name.ToLower();
                         DeviceSendInfo sendInfo = dict[deviceKey];
@@ -132,6 +132,7 @@ namespace Scada.Data.Hub
                     }
                 }
 
+                // 每N个回调一次UI, 更新上传状态
                 if (counter % this.UpdateFrequency == 0)
                 {
                     notify.SetDevicesInfo(dict);
@@ -170,15 +171,21 @@ namespace Scada.Data.Hub
         /// Threading operation
         /// </summary>
         /// <param name="deviceConfig"></param>
-        private bool SendDeviceData(DeviceConfig deviceConfig, DateTime time)
+        private bool SendDeviceData(DataAgent agent, DeviceConfig deviceConfig, DateTime time)
         {
-            Packet p = Packet.CreateRealtimePacket(deviceConfig, time);
+            Packet p = null;
+            if (deviceConfig.IsHubFormat)
+            {
+                p = HubPacket.CreateRealtimePacket(deviceConfig, time);
+            }
+            
+            // HubPacket p = HubPacket.CreateRealtimePacket(deviceConfig, time);
             if (p == null)
             {
                 return false;
             }
             string action = deviceConfig.Action;
-            if (this.agent.SendDataPacket(action, p, time))
+            if (agent.SendDataPacket(action, p, time))
             {
                 p.SetSendStatus(deviceConfig, time);
             }
@@ -221,6 +228,11 @@ namespace Scada.Data.Hub
         {
             this.QuitThread = true;
             Application.Exit();
+        }
+
+        private void HubMainForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
