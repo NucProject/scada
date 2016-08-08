@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Amb8059ExtDevice.cs" />
     <Compile Include="Amb8059Device.cs" />
     <Compile Include="Amb8059Formater.cs" />
     <Compile Include="BAI9125Device.cs" />

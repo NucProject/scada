@@ -197,8 +197,14 @@ namespace Scada.Data.Hub
         private static string GetNotSendSQL(DeviceConfig deviceConfig, DateTime time)
         {
             // Get the recent <count> entries.
+            DateTime lastTime = deviceConfig.lastTime;
+            if (deviceConfig.lastTime < DateTime.Today)
+            {
+                lastTime = DateTime.Today;
+            }
+
             string format = "select * from {0} where time>'{1}' and send=0 order by time";
-            string lastTimeStr = string.Format("{0:yyyy-MM-dd HH:mm:ss}", deviceConfig.lastTime);
+            string lastTimeStr = string.Format("{0:yyyy-MM-dd HH:mm:ss}", lastTime);
             return string.Format(format, deviceConfig.TableName, lastTimeStr);
         }
 
