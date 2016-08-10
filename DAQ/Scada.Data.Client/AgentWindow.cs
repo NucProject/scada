@@ -481,7 +481,9 @@ namespace Scada.Data.Client
         private static DateTime GetDeviceSendTime(DateTime dt, string deviceKey)
         {
             // Labr或者LabrFilter、labrnuclidefilter设备，每5分钟发送一次
-            if ((deviceKey.Equals(Devices.Labr, StringComparison.OrdinalIgnoreCase)) || (deviceKey.Equals(Devices.LabrFilter, StringComparison.OrdinalIgnoreCase)) || (deviceKey.Equals(Devices.LabrNuclideFilter, StringComparison.OrdinalIgnoreCase)))
+            if ((deviceKey.Equals(Devices.Labr, StringComparison.OrdinalIgnoreCase)) || 
+                (deviceKey.Equals(Devices.LabrFilter, StringComparison.OrdinalIgnoreCase)) || 
+                (deviceKey.Equals(Devices.LabrNuclideFilter, StringComparison.OrdinalIgnoreCase)))
             {
                 int min = dt.Minute / 5 * 5;
                 DateTime ret = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, min, 0);
@@ -489,7 +491,8 @@ namespace Scada.Data.Client
             }
             else if (deviceKey.Equals(Devices.Bai9850))
             {
-                DateTime ret = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, 0);
+                int second = dt.Second / 30 * 30;
+                DateTime ret = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, second);
                 DateTime time = ret.AddSeconds(-30);
                 return time; 
             }
@@ -949,6 +952,10 @@ namespace Scada.Data.Client
             else if (device == "labrnuclidefilter")
             {
                 return Devices.LabrNuclideFilter;
+            }
+            else if (device == "bai9850")
+            {
+                return Devices.Bai9850;
             }
             return string.Empty;
         }
