@@ -132,7 +132,12 @@ namespace Scada.Main
         {
             try
             {
-                this.cmdReceiver = new CommandReceiver(Ports.Main);
+                int port = Ports.Main;
+                if (Program.AppName.Contains("Siemens"))
+                {
+                    port = Ports.MainSiemens;
+                }
+                this.cmdReceiver = new CommandReceiver(port);
                 SynchronizationContext sc = SynchronizationContext.Current;
                 this.cmdReceiver.Start(this.OnReceivedCommandLine);
             }

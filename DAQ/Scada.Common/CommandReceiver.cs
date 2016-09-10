@@ -150,6 +150,8 @@ namespace Scada.Common
     {
         public const int Main = 3100;
 
+        public const int MainSiemens = 3105;
+
         public const int DataClient = 3101;
 
         public const int DataClientV2 = 3102;
