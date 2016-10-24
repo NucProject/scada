@@ -45,6 +45,7 @@ namespace Scada.Data.Client
         {
             this.Station = Settings.Instance.Station;
             this.Token = token;
+            this.jobject["history"] = 0;
         }
 
         private int Result
