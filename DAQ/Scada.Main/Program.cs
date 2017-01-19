@@ -45,7 +45,9 @@ namespace Scada.Main
 			private set { Program.deviceManager = value; }
 		}
 
-		public static bool IsWatchRunning()
+        public static string AppName { get; private set; }
+
+        public static bool IsWatchRunning()
 		{
 			Process[] procs = Process.GetProcesses();
 			foreach (Process proc in procs)
@@ -92,10 +94,14 @@ namespace Scada.Main
         static void Main(string[] args)
         {
             bool createNew = false;
-            mutex = new Mutex(true, Application.ProductName, out createNew);
+
+            string appName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location);
+
+            mutex = new Mutex(true, appName, out createNew);
             
             if (createNew)
             {
+                Program.AppName = appName;
                 Program.DeviceManager.Args = args;
 
                 if (!IsWatchRunning())

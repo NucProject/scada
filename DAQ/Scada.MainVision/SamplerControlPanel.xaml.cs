@@ -187,7 +187,7 @@ namespace Scada.MainVision
             string strCmd = string.Format("connect,{0},{1}", strFlowSetting, strTimeSetting); 
 
             // 开始连接
-            Command.Send(Ports.Main, GetRemoteCommand(strCmd));
+            Command.Send(Ports.MainSiemens, GetRemoteCommand(strCmd));
 
             this.ConnectButton.IsEnabled = false;
             // this.StatusLabel.Content = "尝试连接,请等待...";
@@ -243,7 +243,7 @@ namespace Scada.MainVision
                 return;
             }
 
-            Command.Send(Ports.Main, GetRemoteCommand("disconnect"));
+            Command.Send(Ports.MainSiemens, GetRemoteCommand("disconnect"));
 
             DisconnectButton.IsEnabled = false;
             ConnectButton.IsEnabled = false;
@@ -271,7 +271,7 @@ namespace Scada.MainVision
             }
 
             string cmd = string.Format("start:Sid={0}", sid);
-            Command.Send(Ports.Main, GetRemoteCommand(cmd));
+            Command.Send(Ports.MainSiemens, GetRemoteCommand(cmd));
         }
 
         private void OnStopButton(object sender, RoutedEventArgs e)
@@ -282,13 +282,13 @@ namespace Scada.MainVision
                 return;
             }
 
-            Command.Send(Ports.Main, GetRemoteCommand("stop"));
+            Command.Send(Ports.MainSiemens, GetRemoteCommand("stop"));
         }
 
 
         private void OnResetButton(object sender, RoutedEventArgs e)
         {
-            Command.Send(Ports.Main, GetRemoteCommand("reset"));
+            Command.Send(Ports.MainSiemens, GetRemoteCommand("reset"));
         }
         public string DeviceKey
         {
