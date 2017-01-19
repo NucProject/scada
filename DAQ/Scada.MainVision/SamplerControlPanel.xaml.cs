@@ -103,7 +103,7 @@ namespace Scada.MainVision
             //"瞬时采样流量", "累计采样流量", "累积采样时间"
             // panel.SetData(
 
-            this.DataStatusLabel.Content = GetStatus(d, "status", "");
+            //this.DataStatusLabel.Content = GetStatus(d, "status", "");
             this.DataTimeLabel.Content = Get(d, "time", "");
             this.DataFlowLabel.Content = Get(d, "flow", "m³/h");
             this.DataFlowAllLabel.Content = Get(d, "volume", "m³");
@@ -190,7 +190,7 @@ namespace Scada.MainVision
             Command.Send(Ports.Main, GetRemoteCommand(strCmd));
 
             this.ConnectButton.IsEnabled = false;
-            this.StatusLabel.Content = "尝试连接,请等待...";
+            // this.StatusLabel.Content = "尝试连接,请等待...";
 
             if (dispatcherTimer == null)
             {

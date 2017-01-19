@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:m="clr-namespace:Scada.MainVision"
              mc:Ignorable="d" 
-             d:DesignHeight="339" Width="800">
+             d:DesignHeight="500" Width="800">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -23,107 +23,155 @@
         </Grid.RowDefinitions>
             
         <Grid.ColumnDefinitions>
-            
         </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Row="0" Header=" 控制面板 " Foreground="Black">
-            <StackPanel Orientation="Vertical">
-                <TextBlock x:Name="StatusBox" Margin="5,5,5,5"></TextBlock>
-                <StackPanel Orientation="Horizontal">
-                    <Label x:Name="Text7" Content="选择采样方式:" Margin="0,0,20,0"/>
-                    <RadioButton x:Name="RadioSamplebyTime" Content="定时采样" Margin="0,5,20,0" Checked="RadioSamplebyTime_Checked"/>
-                    <RadioButton x:Name="RadioSamplebyVolume" Content="定量采样" Margin="0,5,20,0" Checked="RadioSamplebyVolume_Checked"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label x:Name="Text4" Content="输入采样时间" Margin="0,0,20,0"/>
-                    <TextBox x:Name="TimeSettingText" Margin="0,5,5,5" Width="100"/>
-                    <Label x:Name="Text5" Content="(小时)" Margin="0,0,20,0"/>
-                    <Label x:Name="Text3" Content="输入采样流量" Margin="50,0,20,0"/>
-                    <TextBox x:Name="FlowSettingText" Margin="0,5,5,5" Width="100"/>
-                    <Label x:Name="Text6" Content="" Margin="0,0,20,0"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Label x:Name="Text1" Content="输入采样ID" Margin="0,0,20,0"/>
-                    <TextBox x:Name="SidText" Margin="0,5,5,5" Width="281"/>
-                    <Label x:Name="Text2" Content="默认格式：SID-20130101-120100（年月日-时分秒）" Width="296"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="100" Height="30" Foreground="Black"
-                            x:Name="ConnectButton" Click="OnConnectButton" 
-                            Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">连接</Button>
-                    
-                    <Button Width="100" Height="30" Foreground="Black"
-                            x:Name="StartButton" Click="OnStartButton" 
-                            Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">启动</Button>
-                    
-                    <Button Width="100" Height="30" Foreground="Black"
-                            x:Name="StopButton" Click="OnStopButton" 
-                            Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">停止</Button>
+        <GroupBox Grid.Row="0" Header=" 仪器状态 " Foreground="Black">
+            <StackPanel Orientation="Horizontal">
+                <!-- 1 Left -->
+                <GroupBox Width="400">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal"  Margin="0,5,20,0">
+                            <Label>运行状态</Label>
+                            <Label x:Name="StatusLabel2"></Label>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal"  Margin="0,20,20,0">
+                            <Label>滤纸状态</Label>
+                            <Label x:Name="DataAlarm1Label"></Label>
+                        </StackPanel>
 
-                    <Button Width="100" Height="30" Foreground="Black"
-                            x:Name="ResetButton" Click="OnResetButton" 
-                            Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">重置</Button>
+                        <StackPanel Orientation="Horizontal"  Margin="0,20,20,0">
+                            <Label>流量状态</Label>
+                            <Label x:Name="DataAlarm2Label"></Label>
+                        </StackPanel>
 
-                    <Button Width="100" Height="30" Foreground="Black"
-                            x:Name="DisconnectButton" Click="OnDisconnectButton" 
-                            Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">断开连接</Button>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                <Label>状态：</Label>
-                <Label x:Name="StatusLabel"></Label>
+                        <StackPanel Orientation="Horizontal"  Margin="0,20,20,0">
+                            <Label>主电源状态</Label>
+                            <Label x:Name="DataAlarm3Label"></Label>
+                        </StackPanel>
                     </StackPanel>
+
+                </GroupBox>
+                
+                <!-- 1 Right -->
+                <GroupBox Width="400">
+
+                    <StackPanel Orientation="Vertical">
+                        <!--
+                        <StackPanel Orientation="Horizontal" Margin="0,5,20,0">
+                            <Label>采样状态：</Label>
+                            <Label x:Name="DataStatusLabel"></Label>
+                        </StackPanel>
+                        -->
+
+                        <StackPanel Orientation="Horizontal" Margin="0,5,20,0">
+                            <Label>采样时间：</Label>
+                            <Label x:Name="DataTimeLabel"></Label>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,20,20,0">
+                            <Label>瞬时流量：</Label>
+                            <Label x:Name="DataFlowLabel"></Label>
+                        </StackPanel>
+                        <!-- -->
+                        <StackPanel Orientation="Horizontal" Margin="0,20,20,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Label>累积采样流量：</Label>
+                                <Label x:Name="DataFlowAllLabel"></Label>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,20,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Label>累积采样时间：</Label>
+                                <Label x:Name="DataTimeAllLabel"></Label>
+                            </StackPanel>
+                        </StackPanel>
+                        <!-- -->
+                  
+                    </StackPanel>
+                </GroupBox>
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Grid.Row="1" Header=" 显示面板 " Foreground="Black">
-            <StackPanel Orientation="Vertical">
-                
-                <StackPanel Orientation="Horizontal">
-                    <Label>采样状态：</Label>
-                    <Label x:Name="DataStatusLabel"></Label>
-                </StackPanel>
-                
-                <StackPanel Orientation="Horizontal">
-                    <Label>最近采样时间：</Label>
-                    <Label x:Name="DataTimeLabel"></Label>
-                </StackPanel>
+        <GroupBox Grid.Row="1" Header=" 仪器控制 " Foreground="Black">
+            <StackPanel Orientation="Horizontal">
+                <!-- 2 Left-->
+                <GroupBox Width="400">
+                    <StackPanel Orientation="Vertical">
 
-                <StackPanel Orientation="Horizontal">
-                    <Label>瞬时流量：</Label>
-                    <Label x:Name="DataFlowLabel"></Label>
-                </StackPanel>
-                <!-- -->
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Orientation="Horizontal">
-                        <Label>累积采样流量：</Label>
-                        <Label x:Name="DataFlowAllLabel"></Label>
+                        <TextBlock x:Name="StatusBox" Margin="5,5,5,5"></TextBlock>
+                        
+                        <StackPanel Orientation="Horizontal"  Margin="0,20,20,0">
+                            <Label x:Name="Text7" Content="选择采样方式:" Margin="0,0,20,0"/>
+                            <RadioButton x:Name="RadioSamplebyTime" Content="定时采样" Margin="0,5,20,0" Checked="RadioSamplebyTime_Checked"/>
+                            <RadioButton x:Name="RadioSamplebyVolume" Content="定量采样" Margin="0,5,20,0" Checked="RadioSamplebyVolume_Checked"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal"  Margin="0,20,20,0">
+                            <Label x:Name="Text4" Content="输入采样时间" Margin="0,0,20,0"/>
+                            <TextBox x:Name="TimeSettingText" Margin="0,5,5,5" Width="100"/>
+                            <Label x:Name="Text5" Content="(小时)" Margin="0,0,20,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,20,20,0">
+                            <Label x:Name="Text3" Content="输入采样流量" Margin="0,0,20,0"/>
+                            <TextBox x:Name="FlowSettingText" Margin="0,5,5,5" Width="100"/>
+                            <Label x:Name="Text6" Content="㎥/h" Margin="0,0,20,0"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,20,20,0">
+                            <Label x:Name="Text1" Content="输入采样ID" Margin="0,0,30,0"/>
+                            <TextBox x:Name="SidText" Margin="0,5,5,5" Width="250"/>
+                            <!--
+                            <Label x:Name="Text2" Content="默认格式：SID-20130101-120100（年月日-时分秒）" Width="296"/>
+                            -->
+                        </StackPanel>
+   
+
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal">
-                        <Label>累积采样时间：</Label>
-                        <Label x:Name="DataTimeAllLabel"></Label>
-                    </StackPanel>
-                </StackPanel>
+                </GroupBox>
 
-                <!-- -->
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel Orientation="Horizontal">
-                        <Label>滤纸报警：</Label>
-                        <Label x:Name="DataAlarm1Label"></Label>
-                    </StackPanel>
+                <!-- 2 Right-->
+                <GroupBox Width="400">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
-                        <Label>流量报警：</Label>
-                        <Label x:Name="DataAlarm2Label"></Label>
-                    </StackPanel>
+                        <Label Height="40" x:Name="StatusLabel" Margin="5, 5, 5, 5" Grid.Row="0" Grid.Column="1" Background="AliceBlue"></Label>
+                        
+                        <Button Width="100" Height="30" Foreground="Black"
+                                Grid.Row="0" Grid.Column="0"
+                            x:Name="ConnectButton" Click="OnConnectButton" 
+                            Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">连接</Button>
 
-                    <StackPanel Orientation="Horizontal">
-                        <Label>主电源报警：</Label>
-                        <Label x:Name="DataAlarm3Label"></Label>
-                    </StackPanel>
-                </StackPanel>
+                        <Button Width="100" Height="30" Foreground="Black"
+                            x:Name="StartButton" Click="OnStartButton" Grid.Row="1" Grid.Column="0"
+                            Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">启动</Button>
+
+                        <Button Width="100" Height="30" Foreground="Black"
+                            x:Name="StopButton" Click="OnStopButton" Grid.Row="1" Grid.Column="0"
+                            Margin="5, 70, 5, 5"  Style="{StaticResource ButtonKey}">停止</Button>
+
+                        <Button Width="100" Height="30" Foreground="Black"
+                                Grid.Row="1" Grid.Column="1"
+                            x:Name="ResetButton" Click="OnResetButton" 
+                            Margin="5, 5, 5, 5"  Style="{StaticResource ButtonKey}">重置</Button>
+
+                        <Button Width="100" Height="30" Foreground="Black"
+                                Grid.Row="0" Grid.Column="0"
+                            x:Name="DisconnectButton" Click="OnDisconnectButton" 
+                            Margin="5, 70, 5, 5"  Style="{StaticResource ButtonKey}">断开连接</Button>
+
+                    </Grid>
+                </GroupBox>
+   
             </StackPanel>
-           
         </GroupBox>
         
         <Grid Grid.Row="1" Width="300" Visibility="Collapsed">

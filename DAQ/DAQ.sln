@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.Declare", "Scada.Declare\Scada.Declare.csproj", "{CC1F00BD-567A-4EFE-8F6E-C10E7183409D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.Main", "Scada.Main\Scada.Main.csproj", "{9613A59D-DEC5-4F0A-9694-9B3A22D6E61B}"
@@ -24,6 +22,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.Logger.Server", "Scada.Logger.Server\Scada.Logger.Server.csproj", "{07F60F28-900E-44B1-98C6-D8686B255DAF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.Data.Hub", "Scada.Data.Hub\Scada.Data.Hub.csproj", "{E9527C97-E61E-43DC-95A8-35EE918491AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.MainVision", "Scada.MainVision\Scada.MainVision.csproj", "{222D3901-CCFF-4846-90A2-E7513F7DD8C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scada.Chart", "Scada.Chart\Scada.Chart.csproj", "{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -173,6 +175,30 @@ Global
 		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|Win32.Build.0 = Release|Any CPU
 		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|x86.ActiveCfg = Release|Any CPU
 		{E9527C97-E61E-43DC-95A8-35EE918491AD}.Release|x86.Build.0 = Release|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Release|Win32.ActiveCfg = Release|Any CPU
+		{222D3901-CCFF-4846-90A2-E7513F7DD8C7}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Release|Win32.ActiveCfg = Release|Any CPU
+		{B6AF3022-1BA4-4F1F-A7A3-35ECE6D5D5F4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
