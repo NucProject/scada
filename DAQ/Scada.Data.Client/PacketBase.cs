@@ -5,6 +5,43 @@ using System.Text;
 
 namespace Scada.Data.Client
 {
+    public class PacketBase
+    {
+        public string DeviceKey
+        {
+            get;
+            set;
+        }
+
+        public string Id
+        {
+            get;
+            set;
+        }
+
+        public bool IsFilePacket
+        {
+            get;
+            set;
+        }
+
+        public string Path
+        {
+            get;
+            set;
+        }
+
+        public string FileType
+        {
+            get;
+            set;
+        }
+
+        public virtual void SetHistory()
+        {
+        }
+    }
+
     public class Notify
     {
         /// <summary>

@@ -66,9 +66,9 @@ namespace Scada.Data.Client
         /// </summary>
         /// <param name="packet"></param>
         /// <param name="time"></param>
-        internal bool SendDataPacket(Packet packet, DateTime time)
+        internal bool SendDataPacket(PacketBase packet, DateTime time)
         {
-            return this.Send(this.DataCenter.GetUrl("data/commit"), packet, time);
+            return this.Send(this.DataCenter.GetDataCommitUrl(), packet, time);
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace Scada.Data.Client
         /// Send Dispatcher
         /// </summary>
         /// <param name="p"></param>
-        internal bool SendPacket(Packet p)
+        internal bool SendPacket(PacketBase p)
         {
             return this.SendPacket(p, false);
 
@@ -207,7 +207,7 @@ namespace Scada.Data.Client
             //}
         }
 
-        private bool SendPacket(Packet p, bool fromNewThread)
+        private bool SendPacket(PacketBase p, bool fromNewThread)
         {
             if (!p.IsFilePacket)
             {
@@ -225,7 +225,7 @@ namespace Scada.Data.Client
         /// <param name="api"></param>
         /// <param name="packet"></param>
         /// <param name="time"></param>
-        private bool Send(string api, Packet packet, DateTime time)
+        private bool Send(string api, PacketBase packet, DateTime time)
         {
             try
             {
@@ -248,7 +248,7 @@ namespace Scada.Data.Client
             }
         }
 
-        string GetPacketSID(Packet p)
+        string GetPacketSID(PacketBase p)
         {
             string tmp = p.Path;
             int endIndex = tmp.LastIndexOf("\\");
@@ -257,7 +257,7 @@ namespace Scada.Data.Client
             return tmp.Substring(startIndex + 1, tmp.Length - startIndex - 1);
         }
 
-        void RemoveOccupiedToken(Packet p)
+        void RemoveOccupiedToken(PacketBase p)
         {
             string fileNameWithToken = p.Path;
 
@@ -275,7 +275,7 @@ namespace Scada.Data.Client
         /// Upload File
         /// </summary>
         /// <param name="packet"></param>
-        internal bool SendFilePacket(Packet packet)
+        internal bool SendFilePacket(PacketBase packet)
         {
             if (string.IsNullOrEmpty(packet.Path) || !File.Exists(packet.Path))
             {
@@ -302,7 +302,7 @@ namespace Scada.Data.Client
             else if (packet.FileType.Equals("hpge", StringComparison.OrdinalIgnoreCase))
             {
                 //var folder = DataSource.GetCurrentSid();
-                var folder = GetPacketSID(packet);
+                var folder = this.GetPacketSID(packet);
 
                 var param = "";
                 try 
@@ -345,7 +345,7 @@ namespace Scada.Data.Client
             }
         }
 
-        private string GetRelFilePath(Packet packet)
+        private string GetRelFilePath(PacketBase packet)
         {
             if (packet.FileType.Equals("labr", StringComparison.OrdinalIgnoreCase))
             {

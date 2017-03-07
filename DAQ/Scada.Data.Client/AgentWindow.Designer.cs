@@ -62,6 +62,7 @@
             this.SendCinderellaStatusModuleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SendShelterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SendSycnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.New131ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sysNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.mainMenuStrip = new System.Windows.Forms.MenuStrip();
             this.文件ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -70,7 +71,6 @@
             this.autoDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FetchCmdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkTodayDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.New131ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripContainer1.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
@@ -175,6 +175,7 @@
             this.mainListBox.Name = "mainListBox";
             this.mainListBox.Size = new System.Drawing.Size(830, 318);
             this.mainListBox.TabIndex = 1;
+            this.mainListBox.SelectedIndexChanged += new System.EventHandler(this.mainListBox_SelectedIndexChanged);
             // 
             // dataUploadTabPage
             // 
@@ -284,7 +285,7 @@
             this.toolStripDropDownButton1});
             this.mainToolStrip.Location = new System.Drawing.Point(3, 0);
             this.mainToolStrip.Name = "mainToolStrip";
-            this.mainToolStrip.Size = new System.Drawing.Size(358, 25);
+            this.mainToolStrip.Size = new System.Drawing.Size(327, 25);
             this.mainToolStrip.TabIndex = 0;
             // 
             // toolStripLabel1
@@ -396,6 +397,14 @@
             this.SendSycnToolStripMenuItem.Text = "进程同步测试";
             this.SendSycnToolStripMenuItem.Click += new System.EventHandler(this.SendSycnToolStripMenuItem_Click);
             // 
+            // New131ToolStripMenuItem
+            // 
+            this.New131ToolStripMenuItem.Name = "New131ToolStripMenuItem";
+            this.New131ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.New131ToolStripMenuItem.Tag = "scada.new131";
+            this.New131ToolStripMenuItem.Text = "高压电离室(New131)";
+            this.New131ToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
+            // 
             // sysNotifyIcon
             // 
             this.sysNotifyIcon.Text = "数据上传";
@@ -459,14 +468,6 @@
             this.checkTodayDataToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.checkTodayDataToolStripMenuItem.Text = "申请当日数据复查";
             this.checkTodayDataToolStripMenuItem.Click += new System.EventHandler(this.checkTodayDataToolStripMenuItem_Click);
-            // 
-            // New131ToolStripMenuItem
-            // 
-            this.New131ToolStripMenuItem.Name = "New131ToolStripMenuItem";
-            this.New131ToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.New131ToolStripMenuItem.Tag = "scada.new131";
-            this.New131ToolStripMenuItem.Text = "高压电离室(New131)";
-            this.New131ToolStripMenuItem.Click += new System.EventHandler(this.SendDataToolStripMenuItem_Click);
             // 
             // MainDataAgentWindow
             // 

@@ -128,6 +128,7 @@ namespace Scada.Data.Client
             {
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
+                    
                     data.Clear();
                     while (reader.Read())
                     {
@@ -135,15 +136,33 @@ namespace Scada.Data.Client
 
                         List<Settings.DeviceCode> codes = Settings.Instance.GetCodes(deviceKey);
 
-                        string dataTime = reader.GetString("Time");
-                        item.Add("time", dataTime);
+                        var dataTime = reader.GetMySqlDateTime("Time");
+
+                        item.Add("time", dataTime.GetDateTime().ToString("yyyy-MM-dd HH:mm:ss"));
                         foreach (var c in codes)
                         {
                             string field = c.Field.ToLower();
+                            if (string.Compare(field, "time", true) == 0)
+                            {
+                                continue;
+                            }
                             try
                             {
-                                string v = reader.GetString(field);
-                                item.Add(c.Code, v);
+                                if (c.DataType == "str" || c.DataType == "")
+                                {
+                                    string v = reader.GetString(field);
+                                    item.Add(c.Code, v);
+                                }
+                                else if (c.DataType == "time")
+                                {
+                                    string v = reader.GetMySqlDateTime(field).GetDateTime().ToString("yyyy-MM-dd HH:mm:ss");
+                                    item.Add(c.Code, v);
+                                }
+                                else if (c.DataType == "real")
+                                {
+                                    string v = reader.GetString(field);
+                                    item.Add(c.Code, v);
+                                }
                             }
                             catch (SqlNullValueException)
                             {

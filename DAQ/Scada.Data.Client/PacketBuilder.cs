@@ -20,20 +20,39 @@ namespace Scada.Data.Client
             this.Token = "";
         }
 
-        internal Packet GetPacket(string deviceKey, List<Dictionary<string, object>> list, bool p)
+        public PacketBase GetPacket(string deviceKey, List<Dictionary<string, object>> list, bool p)
         {
-            Packet packet = null;
-            foreach (Dictionary<string, object> data in list)
+            if (Settings.Instance.UseDataFormatV2())
             {
-                packet = this.CombinePacket(packet, this.GetPacket(deviceKey, data, p));
+                string deviceSn = Settings.Instance.GetDeviceSn(deviceKey);
+                PacketV2 packet = this.GetPacketV2(deviceSn, list);
+                return packet;
             }
-            return packet;
+            else
+            {
+                Packet packet = null;
+                foreach (Dictionary<string, object> data in list)
+                {   
+                    packet = this.CombinePacket(packet, this.GetPacketV1(deviceKey, data, p));   
+                }
+                return packet;
+            }
         }
 
-        internal Packet GetPacket(string deviceKey, Dictionary<string, object> data, bool p)
+
+        // V1
+        internal Packet GetPacketV1(string deviceKey, Dictionary<string, object> data, bool p)
         {
             Packet packet = new Packet(this.Token);
             packet.AddData(deviceKey, data);
+            return packet;
+        }
+
+        // V2
+        private PacketV2 GetPacketV2(string deviceSn, List<Dictionary<string, object>> list)
+        {
+            PacketV2 packet = new PacketV2(deviceSn);
+            packet.SetData(list[0]);
             return packet;
         }
 
@@ -77,6 +96,12 @@ namespace Scada.Data.Client
             else { return null; }            
         }
 
+        /// <summary>
+        /// 只适用于以前的协议，以前的协议支持合并多个Packet
+        /// </summary>
+        /// <param name="packet1"></param>
+        /// <param name="packet2"></param>
+        /// <returns></returns>
         internal Packet CombinePacket(Packet packet1, Packet packet2)
         {
             if (packet1 != null)

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Scada.Data.Client
 {
-    public class Packet
+    public class Packet : PacketBase
     {
         // Const keys.
         public const string EntryKey = "entry";
@@ -24,17 +24,7 @@ namespace Scada.Data.Client
 
         private bool hasResult = false;
 
-        public bool IsFilePacket
-        {
-            get;
-            set;
-        }
 
-        public string Options
-        {
-            get;
-            set;
-        }
 
         public Packet()
         {
@@ -59,12 +49,6 @@ namespace Scada.Data.Client
             }
         }
 
-        public string Id
-        {
-            get;
-            set;
-        }
-
         public string Message
         {
             get;
@@ -72,23 +56,19 @@ namespace Scada.Data.Client
         }
 
 
-        public string DeviceKey
-        {
-            get;
-            set;
-        }
+
 
         private string GetProperty(string propertyName)
         {
-            return Packet.GetProperty(propertyName, this.jobject);
+            return Packet.GetProperty(this.jobject, propertyName);
         }
 
-        private static string GetProperty(string propertyName, JObject jsonObject)
+        private static string GetProperty(JObject jsonObject, string propertyName)
         {
-            JToken s = jsonObject[propertyName];
-            if (s != null)
+            JToken t = jsonObject[propertyName];
+            if (t != null)
             {
-                return s.ToString();
+                return t.ToString();
             }
             return string.Empty;
         }
@@ -117,7 +97,7 @@ namespace Scada.Data.Client
             }
         }
 
-        public void setHistory()
+        public override void SetHistory()
         {
             this.jobject["history"] = 1;
         }
@@ -244,13 +224,5 @@ namespace Scada.Data.Client
             return unixTime / 1000;
         }
         
-
-        public string Path
-        {
-            get;
-            set;
-        }
-
-        public string FileType { get; set; }
     }
 }

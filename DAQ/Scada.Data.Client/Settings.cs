@@ -61,11 +61,18 @@ namespace Scada.Data.Client
         {
             public string BaseUrl { get; set; }
 
+            public string DataCommitPath { get; set; }
+
             public string GetUrl(string api)
             {
                 return string.Format("{0}/{1}", this.BaseUrl, api);
             }
 
+            public string GetDataCommitUrl()
+            {
+                string api = string.IsNullOrEmpty(this.DataCommitPath) ? "data/commit" : this.DataCommitPath;
+                return string.Format("{0}/{1}", this.BaseUrl, api);
+            }
         }
 
         /// <summary>
@@ -99,6 +106,12 @@ namespace Scada.Data.Client
         public class Device
         {
             public string TableName
+            {
+                get;
+                set;
+            }
+
+            public string DeviceSn
             {
                 get;
                 set;
@@ -154,12 +167,26 @@ namespace Scada.Data.Client
                 doc.Load(settingFileName);
             }
 
+            var formatNodes = doc.SelectNodes("//format");
+            string version = "1";
+            if (formatNodes != null && formatNodes.Count > 0)
+            {
+                var formatNode = formatNodes[0];
+                version = this.GetAttribute(formatNode, "version");
+                if (version == "2")
+                {
+                    this.useDataFormatV2 = true;
+                }
+            }
+
             var datacenters = doc.SelectNodes("//datacenter2");
             foreach (XmlNode dcn in datacenters)
             {
                 DataCenter2 dc = new DataCenter2();
 
                 dc.BaseUrl = this.GetAttribute(dcn, "BaseUrl");
+
+                dc.DataCommitPath = this.GetAttribute(dcn, "DataCommit");
 
                 dataCenters.Add(dc);
             }
@@ -232,6 +259,13 @@ namespace Scada.Data.Client
                 deviceKey = idNode.Value.ToLower();
             }
 
+            var snNode = deviceNode.Attributes.GetNamedItem("sn");
+            string deviceSn = string.Empty;
+            if (snNode != null)
+            {
+                deviceSn = snNode.Value.ToLower();
+            }
+
             var equipNode = deviceNode.Attributes.GetNamedItem("eno");
             string equipNumber = string.Empty;
             if (equipNode != null)
@@ -260,6 +294,7 @@ namespace Scada.Data.Client
 
             Device device = new Device();
             device.TableName = tableName;
+            device.DeviceSn = deviceSn;
             device.Key = deviceKey;
             device.EquipNumber = equipNumber;
             device.FilePath = filePath;
@@ -290,6 +325,16 @@ namespace Scada.Data.Client
             if (device != null)
             {
                 return device.EquipNumber;
+            }
+            return string.Empty;
+        }
+
+        internal string GetDeviceSn(string deviceKey)
+        {
+            Device device = devices.Find((d) => { return deviceKey.Equals(d.Key, StringComparison.OrdinalIgnoreCase); });
+            if (device != null)
+            {
+                return device.DeviceSn;
             }
             return string.Empty;
         }
@@ -535,6 +580,8 @@ namespace Scada.Data.Client
 
         private Dictionary<string, string> debugDataTimes = new Dictionary<string, string>(10);
 
+        private bool useDataFormatV2 = false;
+
         internal DateTime GetDebugDataTime(string deviceKey)
         {
             DateTime result;
@@ -546,6 +593,11 @@ namespace Scada.Data.Client
                 }
             }
             return default(DateTime);
+        }
+
+        internal bool UseDataFormatV2()
+        {
+            return this.useDataFormatV2;
         }
     }
 }

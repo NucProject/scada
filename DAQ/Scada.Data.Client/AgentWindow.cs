@@ -389,7 +389,7 @@ namespace Scada.Data.Client
    
                 }
                 
-                Packet packet = this.GetPacket(sendTime, deviceKey, packetId);
+                PacketBase packet = this.GetPacket(sendTime, deviceKey, packetId);
                 if (packet != null)
                 {
                     // MessageBox.Show(packet.ToString());
@@ -415,7 +415,7 @@ namespace Scada.Data.Client
 
         private List<Dictionary<string, object>> data = new List<Dictionary<string, object>>();
 
-        private Packet GetPacket(DateTime time, string deviceKey, string packetId)
+        private PacketBase GetPacket(DateTime time, string deviceKey, string packetId)
         {
             if (Settings.Instance.FileDeviceKeys.Contains(deviceKey))
             {
@@ -460,7 +460,7 @@ namespace Scada.Data.Client
                 {
                     if (this.data.Count > 0)
                     {
-                        Packet p = builder.GetPacket(deviceKey, this.data, true);
+                        PacketBase p = builder.GetPacket(deviceKey, this.data, true);
                         p.DeviceKey = deviceKey;
                         p.Id = packetId;
                         return p;
@@ -791,7 +791,7 @@ namespace Scada.Data.Client
                         {
                             p.DeviceKey = Devices.HPGe;
                             p.Id = "";
-                            p.setHistory();
+                            p.SetHistory();
 
                             this.agent.SendPacket(p);
                         }
@@ -822,7 +822,7 @@ namespace Scada.Data.Client
                             {
                                 p.DeviceKey = Devices.Labr;
                                 p.Id = "";
-                                p.setHistory();
+                                p.SetHistory();
 
                                 this.agent.SendPacket(p);
                             }
@@ -880,12 +880,12 @@ namespace Scada.Data.Client
 
                                 if (group.Count >= 20 || i + 1 == len)
                                 {
-                                    Packet p = builder.GetPacket(deviceKey, group, true);
+                                    PacketBase p = builder.GetPacket(deviceKey, group, true);
                                     if (p != null)
                                     {
                                         p.DeviceKey = deviceKey;
                                         p.Id = "";
-                                        p.setHistory();
+                                        p.SetHistory();
 
                                         this.agent.SendPacket(p);
                                     }
@@ -900,10 +900,10 @@ namespace Scada.Data.Client
                             for (var i = 0; i < len; i += 20)
                             {
                                 var part = data.GetRange(i, Math.Min(20, len - i));
-                                Packet p = builder.GetPacket(deviceKey, part, true);
+                                PacketBase p = builder.GetPacket(deviceKey, part, true);
                                 p.DeviceKey = deviceKey;
                                 p.Id = "";
-                                p.setHistory();
+                                p.SetHistory();
 
                                 this.agent.SendPacket(p);
                             }
@@ -1023,6 +1023,11 @@ namespace Scada.Data.Client
         private void checkTodayDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.agent.CheckTodayData(DateTime.Now);
+        }
+
+        private void mainListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
