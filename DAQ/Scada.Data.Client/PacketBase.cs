@@ -25,6 +25,12 @@ namespace Scada.Data.Client
             set;
         }
 
+        public bool IsFormData
+        {
+            get;
+            set;
+        }
+
         public string Path
         {
             get;

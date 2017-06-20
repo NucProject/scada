@@ -22,10 +22,16 @@ namespace Scada.Data.Client
 
         public PacketBase GetPacket(string deviceKey, List<Dictionary<string, object>> list, bool p)
         {
-            if (Settings.Instance.UseDataFormatV2())
+            if (Settings.Instance.DataFormatVersion() == 2)
             {
                 string deviceSn = Settings.Instance.GetDeviceSn(deviceKey);
                 PacketV2 packet = this.GetPacketV2(deviceSn, list);
+                return packet;
+            }
+            if (Settings.Instance.DataFormatVersion() == 3)
+            {
+                string deviceSn = Settings.Instance.GetDeviceSn(deviceKey);
+                FormPacket packet = this.GetFormPacket(deviceSn, list);
                 return packet;
             }
             else
@@ -37,6 +43,13 @@ namespace Scada.Data.Client
                 }
                 return packet;
             }
+        }
+
+        private FormPacket GetFormPacket(string deviceSn, List<Dictionary<string, object>> list)
+        {
+            FormPacket p = new FormPacket();
+            p.SetData(list);
+            return p;
         }
 
 

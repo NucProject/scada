@@ -63,6 +63,8 @@ namespace Scada.Data.Client
 
             public string DataCommitPath { get; set; }
 
+            public string UploadFilePath { get; set; }
+
             public string GetUrl(string api)
             {
                 return string.Format("{0}/{1}", this.BaseUrl, api);
@@ -72,6 +74,16 @@ namespace Scada.Data.Client
             {
                 string api = string.IsNullOrEmpty(this.DataCommitPath) ? "data/commit" : this.DataCommitPath;
                 return string.Format("{0}/{1}", this.BaseUrl, api);
+            }
+
+
+            internal string GetUploadFileUrl(string fileType, string folder, string param)
+            {
+                if (string.IsNullOrEmpty(this.UploadFilePath))
+                {
+                    return null;
+                }
+                return string.Format("{0}/{1}&fileType={2}&folder={3}&param={4}", this.BaseUrl, this.UploadFilePath, fileType, folder, param);
             }
         }
 
@@ -173,10 +185,7 @@ namespace Scada.Data.Client
             {
                 var formatNode = formatNodes[0];
                 version = this.GetAttribute(formatNode, "version");
-                if (version == "2")
-                {
-                    this.useDataFormatV2 = true;
-                }
+                this.dataFormatVersion = int.Parse(version);
             }
 
             var datacenters = doc.SelectNodes("//datacenter2");
@@ -187,6 +196,8 @@ namespace Scada.Data.Client
                 dc.BaseUrl = this.GetAttribute(dcn, "BaseUrl");
 
                 dc.DataCommitPath = this.GetAttribute(dcn, "DataCommit");
+
+                dc.UploadFilePath = this.GetAttribute(dcn, "UploadFile");
 
                 dataCenters.Add(dc);
             }
@@ -580,7 +591,7 @@ namespace Scada.Data.Client
 
         private Dictionary<string, string> debugDataTimes = new Dictionary<string, string>(10);
 
-        private bool useDataFormatV2 = false;
+        private int dataFormatVersion = 1;
 
         internal DateTime GetDebugDataTime(string deviceKey)
         {
@@ -595,9 +606,9 @@ namespace Scada.Data.Client
             return default(DateTime);
         }
 
-        internal bool UseDataFormatV2()
+        internal int DataFormatVersion()
         {
-            return this.useDataFormatV2;
+            return this.dataFormatVersion;
         }
     }
 }

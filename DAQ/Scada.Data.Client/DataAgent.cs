@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -233,6 +234,10 @@ namespace Scada.Data.Client
                 byte[] data = Encoding.ASCII.GetBytes(packet.ToString());
                 using (WebClient wc = new WebClient())
                 {
+                    if (packet.IsFormData)
+                    {
+                        wc.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                    }
                     Byte[] result = wc.UploadData(uri, "POST", data);
                     string strResult = Encoding.ASCII.GetString(result);
                     this.NotifyEvent(this, NotifyEvents.SendDataOK, new Notify() { DeviceKey = packet.DeviceKey, Message = strResult });
@@ -290,6 +295,7 @@ namespace Scada.Data.Client
             }
 
             string uploadUrl = string.Empty;
+            string uploadUri = string.Empty;
 
             // 判断是哪种设备的文件上传
             if (packet.FileType.Equals("labr", StringComparison.OrdinalIgnoreCase))
@@ -316,10 +322,19 @@ namespace Scada.Data.Client
                 }
                 
                 param = param.Replace('/', '-');
-                uploadUrl = this.GetUploadApi(packet.FileType, folder, param);
+
+                // 试图用DataCenter的配置获取UploadFile的Url，不行就走老协议拼路径
+                uploadUri = this.DataCenter.GetUploadFileUrl(packet.FileType, folder, param);
+
+                if (string.IsNullOrEmpty(uploadUri))
+                {
+                    uploadUrl = this.GetUploadApi(packet.FileType, folder, param);
+                    uploadUri = this.DataCenter.GetUrl(uploadUrl);
+                }
+
             }
 
-            Uri uri = new Uri(this.DataCenter.GetUrl(uploadUrl));
+            Uri uri = new Uri(uploadUri);
             try
             {
                 using (WebClient wc = new WebClient())

@@ -5,15 +5,13 @@
     <!--
     <datacenter2 BaseUrl="http://211.103.184.100:8080/" />
     -->
-    <datacenter2 BaseUrl="http://127.0.0.1:9080/" />
+    <datacenter2 BaseUrl="http://127.0.0.1:1001" DataCommit="index.php?r=send/data2" UploadFile="index.php?r=send/file"/>
   </datacenters>
   <!-- NOTICE SNO debug-data-time="2013-11-30 20:33:00"-->
   <site sysname="" sysst="213213123213123213" adapter="" name="" station="129" sno="0313A08" mn="0313A080000000">
   </site>
 
-
-
-
+  <format version="3"></format>
 
   <threshold>
     <polId name="__PLACEHOLDER__" v1="" v2="" />
@@ -29,6 +27,40 @@
       <code field="highvoltage">0102069902</code>
       <code field="temperature">0102069903</code>
     </device>
+
+    <device id="Scada.Cinderella.Data" table="Cinderella_Data" sn="SN12345678"
+      eno="Scada.Cinderella.Data" debug-data-time="2014-07-16 16:38:30">
+      <code field="DeviceTime" type="time">device_time</code>
+      <code field="Sid" type="str">sid</code>
+      <code field="barcode" type="str">barcode</code>
+      <code field="BeginTime" type="time">begin_time</code>
+      <code field="WorkTime" type="str">work_time</code>
+      <code field="Flow">flow</code>
+      <code field="FlowPerHour">flow_per_hour</code>
+      <code field="Pressure">pressure</code>
+      <code field="PressureDiff">pressure_diff</code>
+      <code field="Temperature">temperature</code>
+    </device>
+
+    <device id="Scada.Hpge" table="Hpge_Rec" eno="Scada.Hpge" filepath="">
+      <code field="file-content">01</code>
+    </device>
+
+    <!--
+    <device id="Scada.Cinderella.Data" table="Cinderella_Data" sn="SN12312312011"
+      eno="Scada.Cinderella.Data" debug-data-time="2014-07-16 16:38:30">
+      <code field="DeviceTime" type="time">01</code>
+      <code field="Sid" type="str">02</code>
+      <code field="barcode" type="str">03</code>
+      <code field="BeginTime" type="time">04</code>
+      <code field="WorkTime" type="str">05</code>
+      <code field="Flow">06</code>
+      <code field="FlowPerHour">07</code>
+      <code field="Pressure">08</code>
+      <code field="PressureDiff">09</code>
+      <code field="Temperature">0A</code>
+    </device>
+    -->   
 
     <!--
     <device id="scada.weather" table="weather_rec" eno="002000" debug-data-time="2014-04-24 23:12:30">
