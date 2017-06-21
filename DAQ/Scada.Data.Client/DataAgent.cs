@@ -202,10 +202,9 @@ namespace Scada.Data.Client
                 return true;
             }
             else
-            {
-             * */
-                
-            //}
+            {}
+             * 
+             */
         }
 
         private bool SendPacket(PacketBase p, bool fromNewThread)

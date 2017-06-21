@@ -5,7 +5,7 @@
     <!--
     <datacenter2 BaseUrl="http://211.103.184.100:8080/" />
     -->
-    <datacenter2 BaseUrl="http://192.168.199.209:1024" DataCommit="d/send" UploadFile="d/send/file"/>
+    <datacenter2 BaseUrl="http://45.32.113.2:1024" DataCommit="d/send" UploadFile="d/send/file"/>
   </datacenters>
   <!-- NOTICE SNO debug-data-time="2013-11-30 20:33:00"-->
   <site sysname="" sysst="213213123213123213" adapter="" name="" station="129" sno="0313A08" mn="0313A080000000">
@@ -41,6 +41,18 @@
       <code field="PressureDiff">pressureDiff</code>
       <code field="Temperature">temperature</code>
     </device>
+
+    <device id="Scada.Weather" table="weather_rec" eno="002000" device-id="4" debug-data-time="2017-06-21 22:23:00">
+      <code field="Time" type="time" convert="unix">dataTime</code>
+      <code field="Temperature">temperature</code>
+      <code field="Humidity">humidity</code>
+      <code field="Pressure">pressure</code>
+      <code field="Windspeed">windSpeed</code>
+      <code field="Direction">direction</code>
+      <code field="Raingauge">raingauge</code>
+      <code field="Rainspeed">rainSpeed</code>
+      <code field="IfRain">isRain</code>
+    </device>    
 
     <device id="Scada.Hpge" table="Hpge_Rec" eno="Scada.Hpge" filepath="">
       <code field="file-content">01</code>

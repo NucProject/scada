@@ -144,7 +144,7 @@ namespace Scada.Data.Client
                             string field = c.Field.ToLower();
                             if (string.Compare(field, "time", true) == 0)
                             {
-                                continue;
+                                // continue;
                             }
                             try
                             {
@@ -155,10 +155,13 @@ namespace Scada.Data.Client
                                 }
                                 else if (c.DataType == "time")
                                 {
-                                    string v = reader.GetMySqlDateTime(field).GetDateTime().ToString("yyyy-MM-dd HH:mm:ss");
+                                    DateTime time = reader.GetMySqlDateTime(field).GetDateTime();
+                                    string v = time.ToString("yyyy-MM-dd HH:mm:ss");
                                     if (c.Convert == "unix")
                                     {
-                                        item.Add(c.Code, "11111");
+                                        DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                                        long t = (time.Ticks - startTime.Ticks) / 10000000 - 8 * 60 * 60;
+                                        item.Add(c.Code, t);
                                     }
                                     else
                                     {
