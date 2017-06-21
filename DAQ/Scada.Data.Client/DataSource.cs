@@ -156,7 +156,14 @@ namespace Scada.Data.Client
                                 else if (c.DataType == "time")
                                 {
                                     string v = reader.GetMySqlDateTime(field).GetDateTime().ToString("yyyy-MM-dd HH:mm:ss");
-                                    item.Add(c.Code, v);
+                                    if (c.Convert == "unix")
+                                    {
+                                        item.Add(c.Code, "11111");
+                                    }
+                                    else
+                                    {
+                                        item.Add(c.Code, v);
+                                    }
                                 }
                                 else if (c.DataType == "real")
                                 {

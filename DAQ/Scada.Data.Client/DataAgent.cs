@@ -69,7 +69,7 @@ namespace Scada.Data.Client
         /// <param name="time"></param>
         internal bool SendDataPacket(PacketBase packet, DateTime time)
         {
-            return this.Send(this.DataCenter.GetDataCommitUrl(), packet, time);
+            return this.Send(this.DataCenter.GetDataCommitUrl(packet), packet, time);
         }
 
         /// <summary>
@@ -238,6 +238,7 @@ namespace Scada.Data.Client
                     {
                         wc.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
                     }
+                    var postData = Encoding.ASCII.GetString(data);
                     Byte[] result = wc.UploadData(uri, "POST", data);
                     string strResult = Encoding.ASCII.GetString(result);
                     this.NotifyEvent(this, NotifyEvents.SendDataOK, new Notify() { DeviceKey = packet.DeviceKey, Message = strResult });

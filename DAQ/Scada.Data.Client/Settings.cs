@@ -70,10 +70,17 @@ namespace Scada.Data.Client
                 return string.Format("{0}/{1}", this.BaseUrl, api);
             }
 
-            public string GetDataCommitUrl()
+            public string GetDataCommitUrl(PacketBase packet)
             {
                 string api = string.IsNullOrEmpty(this.DataCommitPath) ? "data/commit" : this.DataCommitPath;
-                return string.Format("{0}/{1}", this.BaseUrl, api);
+                if (string.IsNullOrEmpty(packet.DeviceId))
+                {
+                    return string.Format("{0}/{1}", this.BaseUrl, api);
+                }
+                else
+                {
+                    return string.Format("{0}/{1}/{2}", this.BaseUrl, api, packet.DeviceId);
+                }
             }
 
 
@@ -110,6 +117,11 @@ namespace Scada.Data.Client
                 set;
             }
 
+            public string Convert
+            {
+                get;
+                set;
+            }
         }
 
         /// <summary>
@@ -131,7 +143,7 @@ namespace Scada.Data.Client
 
             private List<DeviceCode> codes = new List<DeviceCode>();
 
-            public void AddCode(string code, string field, string dataType)
+            public void AddCode(string code, string field, string dataType, string convert)
             {
                 if (string.IsNullOrEmpty(dataType))
                 {
@@ -141,7 +153,8 @@ namespace Scada.Data.Client
                 this.codes.Add(new DeviceCode() { 
                     Code = code, 
                     Field = field, 
-                    DataType = dataType 
+                    DataType = dataType,
+                    Convert = convert
                 });
             }
 
@@ -152,10 +165,14 @@ namespace Scada.Data.Client
 
             public string FilePath { get; set; }
 
+            public string DeviceId { get; set; }
+
             internal List<DeviceCode> GetCodes()
             {
                 return this.codes;
             }
+
+            
         }
 
         /// <summary>
@@ -237,7 +254,13 @@ namespace Scada.Data.Client
                         string dataType = "real";
                         if (typeNode != null)
                             dataType = typeNode.Value;
-                        device.AddCode(code, fieldNode.Value, dataType);
+
+                        XmlNode convertNode = codeNode.Attributes.GetNamedItem("convert");
+                        string convert = "";
+                        if (convertNode != null)
+                            convert = convertNode.Value;
+
+                        device.AddCode(code, fieldNode.Value, dataType, convert);
                     }
                 }
             }
@@ -277,6 +300,13 @@ namespace Scada.Data.Client
                 deviceSn = snNode.Value.ToLower();
             }
 
+            var deviceIdNode = deviceNode.Attributes.GetNamedItem("device-id");
+            string deviceId = string.Empty;
+            if (deviceIdNode != null)
+            {
+                deviceId = deviceIdNode.Value.ToLower();
+            }
+
             var equipNode = deviceNode.Attributes.GetNamedItem("eno");
             string equipNumber = string.Empty;
             if (equipNode != null)
@@ -309,6 +339,7 @@ namespace Scada.Data.Client
             device.Key = deviceKey;
             device.EquipNumber = equipNumber;
             device.FilePath = filePath;
+            device.DeviceId = deviceId;
             return device;
         }
 
@@ -346,6 +377,16 @@ namespace Scada.Data.Client
             if (device != null)
             {
                 return device.DeviceSn;
+            }
+            return string.Empty;
+        }
+
+        internal string GetDeviceId(string deviceKey)
+        {
+            Device device = devices.Find((d) => { return deviceKey.Equals(d.Key, StringComparison.OrdinalIgnoreCase); });
+            if (device != null)
+            {
+                return device.DeviceId;
             }
             return string.Empty;
         }

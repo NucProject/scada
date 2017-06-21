@@ -13,6 +13,12 @@ namespace Scada.Data.Client
             set;
         }
 
+        public string DeviceId
+        {
+            get;
+            set;
+        }
+
         public string Id
         {
             get;

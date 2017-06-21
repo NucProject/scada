@@ -30,8 +30,8 @@ namespace Scada.Data.Client
             }
             if (Settings.Instance.DataFormatVersion() == 3)
             {
-                string deviceSn = Settings.Instance.GetDeviceSn(deviceKey);
-                FormPacket packet = this.GetFormPacket(deviceSn, list);
+                string deviceId = Settings.Instance.GetDeviceId(deviceKey);
+                FormPacket packet = this.GetFormPacket(deviceId, list);
                 return packet;
             }
             else
@@ -45,9 +45,9 @@ namespace Scada.Data.Client
             }
         }
 
-        private FormPacket GetFormPacket(string deviceSn, List<Dictionary<string, object>> list)
+        private FormPacket GetFormPacket(string deviceId, List<Dictionary<string, object>> list)
         {
-            FormPacket p = new FormPacket();
+            FormPacket p = new FormPacket(deviceId);
             p.SetData(list);
             return p;
         }

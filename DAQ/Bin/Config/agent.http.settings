@@ -5,7 +5,7 @@
     <!--
     <datacenter2 BaseUrl="http://211.103.184.100:8080/" />
     -->
-    <datacenter2 BaseUrl="http://127.0.0.1:1001" DataCommit="index.php?r=send/data2" UploadFile="index.php?r=send/file"/>
+    <datacenter2 BaseUrl="http://192.168.199.209:1024" DataCommit="d/send" UploadFile="d/send/file"/>
   </datacenters>
   <!-- NOTICE SNO debug-data-time="2013-11-30 20:33:00"-->
   <site sysname="" sysst="213213123213123213" adapter="" name="" station="129" sno="0313A08" mn="0313A080000000">
@@ -28,17 +28,17 @@
       <code field="temperature">0102069903</code>
     </device>
 
-    <device id="Scada.Cinderella.Data" table="Cinderella_Data" sn="SN12345678"
+    <device id="Scada.Cinderella.Data" table="Cinderella_Data" device-id="2"
       eno="Scada.Cinderella.Data" debug-data-time="2014-07-16 16:38:30">
-      <code field="DeviceTime" type="time">device_time</code>
+      <code field="DeviceTime" type="time" convert="unix">dataTime</code>
       <code field="Sid" type="str">sid</code>
       <code field="barcode" type="str">barcode</code>
-      <code field="BeginTime" type="time">begin_time</code>
-      <code field="WorkTime" type="str">work_time</code>
+      <code field="BeginTime" type="time" convert="unix">beginTime</code>
+      <code field="WorkTime" type="str">workTime</code>
       <code field="Flow">flow</code>
-      <code field="FlowPerHour">flow_per_hour</code>
+      <code field="FlowPerHour">flowPerHour</code>
       <code field="Pressure">pressure</code>
-      <code field="PressureDiff">pressure_diff</code>
+      <code field="PressureDiff">pressureDiff</code>
       <code field="Temperature">temperature</code>
     </device>
 
